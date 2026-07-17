@@ -21,3 +21,14 @@ test("manifest includes the integration entry points", async () => {
   await readFile(new URL("../templates/config.hbs", import.meta.url), "utf8");
   await readFile(new URL("../scripts/api-client.mjs", import.meta.url), "utf8");
 });
+
+test("Actor integration supports Pendragon legacy and Foundry v14 hooks", async () => {
+  const source = await readFile(
+    new URL("../scripts/actor-integration.mjs", import.meta.url),
+    "utf8"
+  );
+  assert.match(source, /getActorSheetHeaderButtons/);
+  assert.match(source, /getActorDirectoryEntryContext/);
+  assert.match(source, /getApplicationV1HeaderButtons/);
+  assert.match(source, /getActorContextOptions/);
+});

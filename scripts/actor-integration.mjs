@@ -4,18 +4,22 @@ const MODULE_ID = "pendragon-campaign-manager";
 const SUPPORTED_TYPES = new Set(["character", "npc", "follower"]);
 
 export function registerActorIntegration({ createClient }) {
-  Hooks.on("getApplicationV1HeaderButtons", (application, buttons) => {
+  const addSheetButton = (application, buttons) => {
     const actor = application.actor;
     if (!game.user.isGM || !actor || !SUPPORTED_TYPES.has(actor.type)) return;
+    if (buttons.some((button) => button.class === "pcm-sync-actor")) return;
     buttons.unshift({
       label: actor.getFlag(MODULE_ID, "characterId") ? "PCM.Actor.Resync" : "PCM.Actor.Sync",
       class: "pcm-sync-actor",
       icon: "fa-solid fa-cloud-arrow-up",
       onclick: () => synchronize(actor, createClient)
     });
-  });
+  };
+  Hooks.on("getActorSheetHeaderButtons", addSheetButton);
+  Hooks.on("getApplicationV1HeaderButtons", addSheetButton);
 
-  Hooks.on("getActorContextOptions", (_application, options) => {
+  const addDirectoryOption = (_application, options) => {
+    if (options.some((option) => option.name === "PCM.Actor.Sync")) return;
     options.push({
       name: "PCM.Actor.Sync",
       icon: '<i class="fa-solid fa-cloud-arrow-up"></i>',
@@ -25,7 +29,9 @@ export function registerActorIntegration({ createClient }) {
       },
       callback: (target) => synchronize(actorFromTarget(target), createClient)
     });
-  });
+  };
+  Hooks.on("getActorDirectoryEntryContext", addDirectoryOption);
+  Hooks.on("getActorContextOptions", addDirectoryOption);
 }
 
 async function synchronize(actor, createClient) {

@@ -32,7 +32,7 @@ The API key uses Foundry's client setting storage. Each GM browser must configur
 
 ## Synchronize an Actor
 
-As a Gamemaster, open a supported Actor sheet and select **Send to Campaign Manager** in its header, or right-click an Actor in the Actor Directory and choose the same command. Select Player Knight or NPC, provide the player name when required, and synchronize.
+As a Gamemaster, open a supported Actor sheet and select the cloud-upload **Send to Campaign Manager** button in its header, or right-click an Actor in the Actor Directory and choose **Send to Campaign Manager**. Select Player Knight or NPC, provide the player name when required, and synchronize. The module registers both Pendragon's legacy Actor UI hooks and Foundry v14's current hook names.
 
 The module stores the backend character ID as a non-secret Actor flag. Repeating the command updates the same backend character. If the flag is lost, the module recovers the mapping by the Actor UUID to avoid duplicates.
 
