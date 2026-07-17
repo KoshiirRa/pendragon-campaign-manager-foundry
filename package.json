@@ -1,0 +1,13 @@
+{
+  "name": "pendragon-campaign-manager-foundry",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+

@@ -1,0 +1,7 @@
+{
+  "PCM.Settings.BackendUrl.Name": "Campaign Manager API URL",
+  "PCM.Settings.BackendUrl.Hint": "Base HTTPS URL of the Pendragon Campaign Manager FastAPI service.",
+  "PCM.Settings.CampaignId.Name": "Campaign ID",
+  "PCM.Settings.CampaignId.Hint": "Database campaign UUID associated with this Foundry world."
+}
+
