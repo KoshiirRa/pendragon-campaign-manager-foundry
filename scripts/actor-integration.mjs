@@ -28,6 +28,29 @@ export function registerActorIntegration({ createClient }) {
   Hooks.on("getActorSheetHeaderButtons", addSheetButton);
   Hooks.on("getApplicationV1HeaderButtons", addSheetButton);
 
+  const addV2HeaderControl = (application, controls) => {
+    const actor = application.actor ?? application.document;
+    logInfo("ApplicationV2 header controls hook fired.", {
+      application: application.constructor?.name,
+      documentName: actor?.documentName,
+      actorId: actor?.id,
+      actorName: actor?.name,
+      actorType: actor?.type,
+      isGM: game.user.isGM,
+      existingControls: controls.map((control) => control.action ?? control.label)
+    });
+    if (!game.user.isGM || actor?.documentName !== "Actor" || !SUPPORTED_TYPES.has(actor.type)) return;
+    if (controls.some((control) => control.action === "pcm-sync-actor")) return;
+    controls.unshift({
+      action: "pcm-sync-actor",
+      icon: "fa-solid fa-cloud-arrow-up",
+      label: "PCM.Actor.Sync",
+      visible: true,
+      onClick: () => synchronize(actor, createClient)
+    });
+  };
+  Hooks.on("getHeaderControlsApplicationV2", addV2HeaderControl);
+
   const addDirectoryOption = (_application, options) => {
     logInfo("Actor Directory context hook fired.", {
       application: _application?.constructor?.name,
@@ -81,6 +104,7 @@ function hookRegistrationCounts() {
   const names = [
     "getActorSheetHeaderButtons",
     "getApplicationV1HeaderButtons",
+    "getHeaderControlsApplicationV2",
     "getActorDirectoryEntryContext",
     "getActorContextOptions",
     "renderActorSheet"

@@ -38,7 +38,7 @@ The module stores the backend character ID as a non-secret Actor flag. Repeating
 
 ## Diagnostics
 
-Version 0.4.2 logs module lifecycle and Actor UI hook activity to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+Version 0.4.3 logs module lifecycle and Actor UI hook activity to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()

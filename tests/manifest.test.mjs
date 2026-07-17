@@ -30,7 +30,18 @@ test("Actor integration supports Pendragon legacy and Foundry v14 hooks", async 
   assert.match(source, /getActorSheetHeaderButtons/);
   assert.match(source, /getActorDirectoryEntryContext/);
   assert.match(source, /getApplicationV1HeaderButtons/);
+  assert.match(source, /getHeaderControlsApplicationV2/);
   assert.match(source, /getActorContextOptions/);
+});
+
+test("Foundry v14 Actor controls use the ApplicationV2 control contract", async () => {
+  const source = await readFile(
+    new URL("../scripts/actor-integration.mjs", import.meta.url),
+    "utf8"
+  );
+  assert.match(source, /action: "pcm-sync-actor"/);
+  assert.match(source, /onClick: \(\) => synchronize\(actor, createClient\)/);
+  assert.match(source, /actor\?\.documentName !== "Actor"/);
 });
 
 test("diagnostics never log or return the API key value", async () => {
