@@ -36,4 +36,40 @@
     </div>
     <p class="hint">{{localize "PCM.Settings.CampaignId.Hint"}}</p>
   </div>
+
+  <fieldset class="pcm-create-campaign">
+    <legend>{{localize "PCM.Config.CreateCampaign"}}</legend>
+    <p class="hint">{{localize "PCM.Config.CreateCampaignHint"}}</p>
+
+    <div class="form-group">
+      <label for="pcm-new-campaign-name">{{localize "PCM.Config.CampaignName"}}</label>
+      <div class="form-fields">
+        <input id="pcm-new-campaign-name" name="newCampaignName" type="text" maxlength="200">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="pcm-new-campaign-slug">{{localize "PCM.Config.CampaignSlug"}}</label>
+      <div class="form-fields">
+        <input id="pcm-new-campaign-slug" name="newCampaignSlug" type="text" maxlength="100" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="{{localize 'PCM.Config.CampaignSlugPlaceholder'}}">
+      </div>
+      <p class="hint">{{localize "PCM.Config.CampaignSlugHint"}}</p>
+    </div>
+
+    <div class="form-group">
+      <label for="pcm-new-campaign-year">{{localize "PCM.Config.CampaignYear"}}</label>
+      <div class="form-fields">
+        <input id="pcm-new-campaign-year" name="newCampaignYear" type="number" value="485" min="1" max="9999" step="1">
+      </div>
+    </div>
+
+    <div class="form-group stacked">
+      <label for="pcm-new-campaign-description">{{localize "PCM.Config.CampaignDescription"}}</label>
+      <textarea id="pcm-new-campaign-description" name="newCampaignDescription" rows="3"></textarea>
+    </div>
+
+    <button type="button" data-action="createCampaign">
+      <i class="fa-solid fa-plus"></i> {{localize "PCM.Config.CreateAndSelect"}}
+    </button>
+  </fieldset>
 </div>

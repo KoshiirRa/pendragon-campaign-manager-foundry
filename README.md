@@ -4,11 +4,12 @@ A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th 
 
 ## Status
 
-Version 0.2 provides the first usable connection slice:
+Version 0.3 provides the first campaign-management slice:
 
 - a Foundry v14 ApplicationV2 configuration screen;
 - the live Cloud Run API as the default backend;
 - GM-only connection testing and campaign discovery;
+- campaign creation with automatic selection for the current world;
 - a client-scoped API key that is not synchronized to players;
 - a world-scoped selected campaign ID;
 - a small module API for health, readiness, campaign listing, and campaign retrieval.

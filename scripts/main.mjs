@@ -55,6 +55,7 @@ Hooks.once("ready", () => {
     health: () => createClient({ authenticated: false }).health(),
     ready: () => createClient({ authenticated: false }).ready(),
     listCampaigns: () => createClient().listCampaigns(),
+    createCampaign: (data) => createClient().createCampaign(data),
     getCampaign: (campaignId = game.settings.get(MODULE_ID, "campaignId")) =>
       createClient().getCampaign(campaignId)
   });

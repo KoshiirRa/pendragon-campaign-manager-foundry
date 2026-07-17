@@ -13,5 +13,16 @@
   "PCM.Config.SelectCampaign": "Select a campaign",
   "PCM.Config.ConnectionSuccess": "Campaign Manager connection succeeded.",
   "PCM.Config.Save": "Save Connection",
-  "PCM.Config.Saved": "Campaign Manager settings saved."
+  "PCM.Config.Saved": "Campaign Manager settings saved.",
+  "PCM.Config.CreateCampaign": "Create a New Campaign",
+  "PCM.Config.CreateCampaignHint": "Creates a campaign in the persistent backend and immediately selects it for this world.",
+  "PCM.Config.CampaignName": "Campaign Name",
+  "PCM.Config.CampaignSlug": "Campaign Slug",
+  "PCM.Config.CampaignSlugPlaceholder": "generated-from-name-if-blank",
+  "PCM.Config.CampaignSlugHint": "Optional. Use lowercase letters, numbers, and hyphens; leave blank to generate it from the name.",
+  "PCM.Config.CampaignYear": "Starting Year",
+  "PCM.Config.CampaignDescription": "Description",
+  "PCM.Config.CreateAndSelect": "Create and Select Campaign",
+  "PCM.Config.CampaignNameRequired": "Enter a campaign name that can produce a valid slug.",
+  "PCM.Config.CampaignCreated": "Created and selected campaign: {name}."
 }

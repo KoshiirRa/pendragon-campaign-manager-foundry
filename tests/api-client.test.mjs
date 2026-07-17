@@ -4,7 +4,8 @@ import test from "node:test";
 import {
   CampaignApiClient,
   CampaignApiError,
-  normalizeBaseUrl
+  normalizeBaseUrl,
+  slugifyCampaignName
 } from "../scripts/api-client.mjs";
 
 test("normalizes production and local development URLs", () => {
@@ -55,6 +56,33 @@ test("reports backend errors with status and detail", async () => {
     client.listCampaigns(),
     (error) => error.status === 401 && error.message.includes("Missing or invalid API key")
   );
+});
+
+test("creates a campaign with the expected API payload", async () => {
+  let request;
+  const client = new CampaignApiClient({
+    baseUrl: "https://api.example.com",
+    apiKey: "secret-value",
+    fetchImpl: async (url, options) => {
+      request = { url, options };
+      return jsonResponse({ id: "new-id", name: "The Great Campaign" }, 201);
+    }
+  });
+  const data = {
+    name: "The Great Campaign",
+    slug: "the-great-campaign",
+    current_year: 485,
+    description: null
+  };
+  const campaign = await client.createCampaign(data);
+  assert.equal(campaign.id, "new-id");
+  assert.equal(request.options.method, "POST");
+  assert.deepEqual(JSON.parse(request.options.body), data);
+});
+
+test("generates API-safe campaign slugs", () => {
+  assert.equal(slugifyCampaignName("  The Great Pendragon Campaign!  "), "the-great-pendragon-campaign");
+  assert.equal(slugifyCampaignName("Épée & Graal"), "epee-graal");
 });
 
 function jsonResponse(body, status = 200) {

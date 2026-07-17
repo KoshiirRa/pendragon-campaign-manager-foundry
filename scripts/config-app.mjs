@@ -1,4 +1,9 @@
-import { CampaignApiClient, CampaignApiError, normalizeBaseUrl } from "./api-client.mjs";
+import {
+  CampaignApiClient,
+  CampaignApiError,
+  normalizeBaseUrl,
+  slugifyCampaignName
+} from "./api-client.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -10,7 +15,10 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
     tag: "form",
     position: { width: 600 },
     window: { icon: "fa-solid fa-database", title: "PCM.Config.Title" },
-    actions: { testConnection: CampaignManagerConfig.testConnection },
+    actions: {
+      testConnection: CampaignManagerConfig.testConnection,
+      createCampaign: CampaignManagerConfig.createCampaign
+    },
     form: {
       closeOnSubmit: false,
       handler: CampaignManagerConfig.submitForm
@@ -68,6 +76,44 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
       notifyError(error);
     }
   }
+
+  static async createCampaign(event, target) {
+    event.preventDefault();
+    if (!game.user.isGM) return;
+    const data = new FormData(target.closest("form"));
+    const name = data.get("newCampaignName")?.trim() ?? "";
+    const slug = data.get("newCampaignSlug")?.trim() || slugifyCampaignName(name);
+    if (!name || !slug) {
+      ui.notifications.error(game.i18n.localize("PCM.Config.CampaignNameRequired"));
+      return;
+    }
+
+    try {
+      const backendUrl = normalizeBaseUrl(data.get("backendUrl"));
+      const apiKey = data.get("apiKey")?.trim() ?? "";
+      const client = new CampaignApiClient({ baseUrl: backendUrl, apiKey });
+      const campaign = await client.createCampaign({
+        name,
+        slug,
+        description: data.get("newCampaignDescription")?.trim() || null,
+        current_year: Number(data.get("newCampaignYear") || 485)
+      });
+      await saveConnectionSettings({ backendUrl, apiKey, campaignId: campaign.id });
+      this.campaigns = await client.listCampaigns();
+      ui.notifications.info(
+        game.i18n.format("PCM.Config.CampaignCreated", { name: campaign.name })
+      );
+      await this.render({ force: true });
+    } catch (error) {
+      notifyError(error);
+    }
+  }
+}
+
+async function saveConnectionSettings({ backendUrl, apiKey, campaignId }) {
+  await game.settings.set(MODULE_ID, "backendUrl", backendUrl);
+  await game.settings.set(MODULE_ID, "apiKey", apiKey);
+  await game.settings.set(MODULE_ID, "campaignId", campaignId);
 }
 
 function notifyError(error) {

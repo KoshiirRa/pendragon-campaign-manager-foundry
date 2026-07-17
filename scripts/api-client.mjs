@@ -30,6 +30,10 @@ export class CampaignApiClient {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}`);
   }
 
+  async createCampaign(data) {
+    return this.#request("/api/v1/campaigns", { method: "POST", body: data });
+  }
+
   async #request(path, { authenticated = true, method = "GET", body = undefined } = {}) {
     if (!this.baseUrl) throw new CampaignApiError("Campaign Manager API URL is not configured.");
     if (authenticated && !this.apiKey) {
@@ -73,6 +77,16 @@ export function normalizeBaseUrl(value) {
     throw new CampaignApiError("Campaign Manager API URL must use HTTPS.");
   }
   return url.toString().replace(/\/$/, "");
+}
+
+export function slugifyCampaignName(value) {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 async function readPayload(response) {
