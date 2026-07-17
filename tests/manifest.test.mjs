@@ -16,3 +16,8 @@ test("release URLs correspond to the manifest version", () => {
   assert.match(manifest.download, new RegExp(`/v${manifest.version}/module\\.zip$`));
 });
 
+test("manifest includes the integration entry points", async () => {
+  assert.deepEqual(manifest.esmodules, ["scripts/main.mjs"]);
+  await readFile(new URL("../templates/config.hbs", import.meta.url), "utf8");
+  await readFile(new URL("../scripts/api-client.mjs", import.meta.url), "utf8");
+});

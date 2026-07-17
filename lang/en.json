@@ -2,6 +2,16 @@
   "PCM.Settings.BackendUrl.Name": "Campaign Manager API URL",
   "PCM.Settings.BackendUrl.Hint": "Base HTTPS URL of the Pendragon Campaign Manager FastAPI service.",
   "PCM.Settings.CampaignId.Name": "Campaign ID",
-  "PCM.Settings.CampaignId.Hint": "Database campaign UUID associated with this Foundry world."
+  "PCM.Settings.CampaignId.Hint": "Database campaign UUID associated with this Foundry world.",
+  "PCM.Settings.ApiKey.Name": "Campaign Manager API Key",
+  "PCM.Settings.ApiKey.Hint": "Stored only in this GM browser. It is not synchronized to players or other Gamemasters.",
+  "PCM.Config.Title": "Pendragon Campaign Manager",
+  "PCM.Config.Open": "Configure Connection",
+  "PCM.Config.Hint": "Connect this world to the persistent campaign backend.",
+  "PCM.Config.SecurityHint": "Only Gamemasters can open this configuration. Each GM browser must configure its own API key.",
+  "PCM.Config.Test": "Test and Load Campaigns",
+  "PCM.Config.SelectCampaign": "Select a campaign",
+  "PCM.Config.ConnectionSuccess": "Campaign Manager connection succeeded.",
+  "PCM.Config.Save": "Save Connection",
+  "PCM.Config.Saved": "Campaign Manager settings saved."
 }
-

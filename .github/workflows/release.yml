@@ -22,7 +22,7 @@ jobs:
         run: |
           node -e "const m=require('./module.json'); if ('v'+m.version !== process.env.GITHUB_REF_NAME) process.exit(1)"
       - name: Build module archive
-        run: zip -r module.zip module.json LICENSE scripts styles lang
+        run: zip -r module.zip module.json LICENSE README.md scripts styles lang templates
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
