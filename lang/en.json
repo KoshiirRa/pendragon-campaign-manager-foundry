@@ -24,5 +24,14 @@
   "PCM.Config.CampaignDescription": "Description",
   "PCM.Config.CreateAndSelect": "Create and Select Campaign",
   "PCM.Config.CampaignNameRequired": "Enter a campaign name that can produce a valid slug.",
-  "PCM.Config.CampaignCreated": "Created and selected campaign: {name}."
+  "PCM.Config.CampaignCreated": "Created and selected campaign: {name}.",
+  "PCM.Actor.Sync": "Send to Campaign Manager",
+  "PCM.Actor.Resync": "Update Campaign Manager",
+  "PCM.Actor.Kind": "Campaign Character Type",
+  "PCM.Actor.PlayerKnight": "Player Knight",
+  "PCM.Actor.Npc": "NPC",
+  "PCM.Actor.PlayerName": "Player Name",
+  "PCM.Actor.SyncNow": "Synchronize",
+  "PCM.Actor.Created": "Created Campaign Manager character for {name}.",
+  "PCM.Actor.Updated": "Updated Campaign Manager character for {name}."
 }

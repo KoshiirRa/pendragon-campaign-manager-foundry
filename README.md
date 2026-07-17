@@ -4,7 +4,7 @@ A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th 
 
 ## Status
 
-Version 0.3 provides the first campaign-management slice:
+Version 0.4 provides campaign setup and controlled Actor synchronization:
 
 - a Foundry v14 ApplicationV2 configuration screen;
 - the live Cloud Run API as the default backend;
@@ -13,8 +13,11 @@ Version 0.3 provides the first campaign-management slice:
 - a client-scoped API key that is not synchronized to players;
 - a world-scoped selected campaign ID;
 - a small module API for health, readiness, campaign listing, and campaign retrieval.
+- GM-triggered synchronization for Pendragon `character`, `npc`, and `follower` Actors;
+- idempotent updates using Foundry Actor UUIDs and backend character IDs;
+- player-knight versus NPC selection before the first synchronization.
 
-Actor and journal synchronization are not implemented yet.
+Traits, skills, passions, Glory, and journals are not synchronized yet.
 
 ## Configure a world
 
@@ -26,6 +29,12 @@ Actor and journal synchronization are not implemented yet.
 6. Select **Test and Load Campaigns**, choose the campaign, and save.
 
 The API key uses Foundry's client setting storage. Each GM browser must configure it independently. It is never stored in the world database or sent to player clients.
+
+## Synchronize an Actor
+
+As a Gamemaster, open a supported Actor sheet and select **Send to Campaign Manager** in its header, or right-click an Actor in the Actor Directory and choose the same command. Select Player Knight or NPC, provide the player name when required, and synchronize.
+
+The module stores the backend character ID as a non-secret Actor flag. Repeating the command updates the same backend character. If the flag is lost, the module recovers the mapping by the Actor UUID to avoid duplicates.
 
 ## Development installation
 

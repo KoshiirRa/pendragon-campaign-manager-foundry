@@ -1,5 +1,6 @@
 import { CampaignApiClient } from "./api-client.mjs";
 import { CampaignManagerConfig } from "./config-app.mjs";
+import { registerActorIntegration } from "./actor-integration.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 const DEFAULT_BACKEND = "https://pendragon-campaign-api-wetwnuz4jq-uc.a.run.app";
@@ -57,8 +58,18 @@ Hooks.once("ready", () => {
     listCampaigns: () => createClient().listCampaigns(),
     createCampaign: (data) => createClient().createCampaign(data),
     getCampaign: (campaignId = game.settings.get(MODULE_ID, "campaignId")) =>
-      createClient().getCampaign(campaignId)
+      createClient().getCampaign(campaignId),
+    syncActor: async (actor, options) => {
+      const { syncActor } = await import("./actor-sync.mjs");
+      return syncActor(actor, {
+        client: createClient(),
+        campaignId: game.settings.get(MODULE_ID, "campaignId"),
+        worldId: game.world.id,
+        ...options
+      });
+    }
   });
+  registerActorIntegration({ createClient });
 });
 
 function createClient({ authenticated = true } = {}) {

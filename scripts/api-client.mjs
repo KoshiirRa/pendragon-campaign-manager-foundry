@@ -30,6 +30,30 @@ export class CampaignApiClient {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}`);
   }
 
+  async listCharacters(campaignId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/characters`);
+  }
+
+  async getCharacter(campaignId, characterId) {
+    return this.#request(
+      `/api/v1/campaigns/${encodeURIComponent(campaignId)}/characters/${encodeURIComponent(characterId)}`
+    );
+  }
+
+  async createCharacter(campaignId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/characters`, {
+      method: "POST",
+      body: data
+    });
+  }
+
+  async updateCharacter(campaignId, characterId, data) {
+    return this.#request(
+      `/api/v1/campaigns/${encodeURIComponent(campaignId)}/characters/${encodeURIComponent(characterId)}`,
+      { method: "PATCH", body: data }
+    );
+  }
+
   async createCampaign(data) {
     return this.#request("/api/v1/campaigns", { method: "POST", body: data });
   }
