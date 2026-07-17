@@ -80,6 +80,26 @@ test("creates a campaign with the expected API payload", async () => {
   assert.deepEqual(JSON.parse(request.options.body), data);
 });
 
+test("posts a character snapshot to the idempotent synchronization endpoint", async () => {
+  let request;
+  const client = new CampaignApiClient({
+    baseUrl: "https://api.example.com",
+    apiKey: "secret-value",
+    fetchImpl: async (url, options) => {
+      request = { url, options };
+      return jsonResponse({ character_id: "character-1", changed: true });
+    }
+  });
+  const snapshot = { effective_year: 485, traits: [], skills: [], passions: [], glory_total: 0 };
+  await client.syncCharacterSnapshot("campaign-1", "character-1", snapshot);
+  assert.equal(
+    request.url,
+    "https://api.example.com/api/v1/campaigns/campaign-1/characters/character-1/foundry-snapshot"
+  );
+  assert.equal(request.options.method, "POST");
+  assert.deepEqual(JSON.parse(request.options.body), snapshot);
+});
+
 test("generates API-safe campaign slugs", () => {
   assert.equal(slugifyCampaignName("  The Great Pendragon Campaign!  "), "the-great-pendragon-campaign");
   assert.equal(slugifyCampaignName("Épée & Graal"), "epee-graal");

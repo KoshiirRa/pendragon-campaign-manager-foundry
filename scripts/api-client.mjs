@@ -54,6 +54,13 @@ export class CampaignApiClient {
     );
   }
 
+  async syncCharacterSnapshot(campaignId, characterId, data) {
+    return this.#request(
+      `/api/v1/campaigns/${encodeURIComponent(campaignId)}/characters/${encodeURIComponent(characterId)}/foundry-snapshot`,
+      { method: "POST", body: data }
+    );
+  }
+
   async createCampaign(data) {
     return this.#request("/api/v1/campaigns", { method: "POST", body: data });
   }

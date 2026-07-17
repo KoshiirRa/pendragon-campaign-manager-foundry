@@ -67,6 +67,8 @@ function fakeActor(flags) {
 }
 
 function syncOptions(client) {
+  client.getCampaign ??= async () => ({ id: "campaign-1", current_year: 485 });
+  client.syncCharacterSnapshot ??= async () => ({ changed: true });
   return {
     client,
     campaignId: "campaign-1",

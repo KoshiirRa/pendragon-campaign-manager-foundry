@@ -4,7 +4,7 @@ A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th 
 
 ## Status
 
-Version 0.4 provides campaign setup and controlled Actor synchronization:
+Version 0.5 provides campaign setup and historical Actor synchronization:
 
 - a Foundry v14 ApplicationV2 configuration screen;
 - the live Cloud Run API as the default backend;
@@ -16,8 +16,10 @@ Version 0.4 provides campaign setup and controlled Actor synchronization:
 - GM-triggered synchronization for Pendragon `character`, `npc`, and `follower` Actors;
 - idempotent updates using Foundry Actor UUIDs and backend character IDs;
 - player-knight versus NPC selection before the first synchronization.
+- idempotent synchronization of traits, skills, passions, and total Glory;
+- central campaign events for each synchronization that changes historical state.
 
-Traits, skills, passions, Glory, and journals are not synchronized yet.
+Journals, equipment, horses, household members, and wounds are not synchronized yet.
 
 ## Configure a world
 
@@ -32,13 +34,18 @@ The API key uses Foundry's client setting storage. Each GM browser must configur
 
 ## Synchronize an Actor
 
-As a Gamemaster, open a supported Actor sheet and select the cloud-upload **Send to Campaign Manager** button in its header, or right-click an Actor in the Actor Directory and choose **Send to Campaign Manager**. Select Player Knight or NPC, provide the player name when required, and synchronize. The module registers both Pendragon's legacy Actor UI hooks and Foundry v14's current hook names.
+As a Gamemaster, open a supported Actor sheet and select **Send to Campaign Manager** from its header controls menu. Select Player Knight or NPC, provide the player name when required, and synchronize.
 
 The module stores the backend character ID as a non-secret Actor flag. Repeating the command updates the same backend character. If the flag is lost, the module recovers the mapping by the Actor UUID to avoid duplicates.
 
+The module reads Pendragon's prepared Item values for traits, skills, and passions and sends their
+stable PID or Item UUID. It also sends the Actor's calculated total Glory. The backend appends only
+values that changed since the last snapshot, so repeatedly synchronizing an unchanged sheet does
+not duplicate historical ledger rows.
+
 ## Diagnostics
 
-Version 0.4.4 logs module lifecycle and Actor UI hook activity to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+Version 0.5.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()

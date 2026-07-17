@@ -1,4 +1,5 @@
 import { actorToCharacterPayload, characterUpdatePayload } from "./actor-mapper.mjs";
+import { actorToSnapshot } from "./actor-snapshot.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 
@@ -30,7 +31,11 @@ export async function syncActor(actor, { client, campaignId, kind, playerName, w
     ? await client.updateCharacter(campaignId, existing.id, characterUpdatePayload(payload))
     : await client.createCharacter(campaignId, payload);
 
+  const campaign = await client.getCampaign(campaignId);
+  const snapshot = actorToSnapshot(actor, campaign.current_year);
+  const snapshotResult = await client.syncCharacterSnapshot(campaignId, character.id, snapshot);
+
   await actor.setFlag?.(MODULE_ID, "characterId", character.id);
   await actor.setFlag?.(MODULE_ID, "lastSyncedAt", new Date().toISOString());
-  return { character, created: !existing };
+  return { character, created: !existing, snapshot: snapshotResult };
 }

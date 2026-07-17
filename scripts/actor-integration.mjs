@@ -109,7 +109,8 @@ async function synchronize(actor, createClient) {
     logInfo("Actor synchronization completed.", {
       actorId: actor.id,
       characterId: result.character.id,
-      created: result.created
+      created: result.created,
+      snapshot: result.snapshot
     });
     ui.notifications.info(game.i18n.format(message, { name: actor.name }));
   } catch (error) {
