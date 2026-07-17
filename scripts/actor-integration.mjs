@@ -83,9 +83,22 @@ export function registerActorIntegration({ createClient }) {
 
 async function synchronize(actor, createClient) {
   if (!actor) return;
+  logInfo("Actor synchronization requested.", {
+    actorId: actor.id,
+    actorName: actor.name,
+    actorType: actor.type
+  });
   const selection = await chooseCharacterKind(actor);
-  if (!selection) return;
+  if (!selection) {
+    logInfo("Actor synchronization canceled before submission.", { actorId: actor.id });
+    return;
+  }
   try {
+    logInfo("Submitting Actor to Campaign Manager.", {
+      actorId: actor.id,
+      kind: selection.kind,
+      campaignId: game.settings.get(MODULE_ID, "campaignId")
+    });
     const result = await syncActor(actor, {
       client: createClient(),
       campaignId: game.settings.get(MODULE_ID, "campaignId"),
@@ -93,6 +106,11 @@ async function synchronize(actor, createClient) {
       ...selection
     });
     const message = result.created ? "PCM.Actor.Created" : "PCM.Actor.Updated";
+    logInfo("Actor synchronization completed.", {
+      actorId: actor.id,
+      characterId: result.character.id,
+      created: result.created
+    });
     ui.notifications.info(game.i18n.format(message, { name: actor.name }));
   } catch (error) {
     logError(`Actor synchronization failed for ${actor.name}.`, error);
@@ -136,7 +154,16 @@ async function chooseCharacterKind(actor) {
     rejectClose: false
   });
   if (!formData) return null;
-  return { kind: formData.get("kind"), playerName: formData.get("playerName") };
+  return dialogSelection(formData);
+}
+
+export function dialogSelection(formData) {
+  const value = (name) => {
+    if (typeof formData?.get === "function") return formData.get(name);
+    if (formData?.object && typeof formData.object === "object") return formData.object[name];
+    return formData?.[name];
+  };
+  return { kind: value("kind"), playerName: value("playerName") };
 }
 
 function actorFromTarget(target) {
