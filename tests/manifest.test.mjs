@@ -8,7 +8,7 @@ test("manifest targets Foundry v14 and Pendragon", () => {
   assert.equal(manifest.id, "pendragon-campaign-manager");
   assert.equal(manifest.compatibility.minimum, "14");
   assert.equal(manifest.compatibility.verified, "14");
-  assert.ok(manifest.relationships.systems.some(({ id }) => id === "pendragon"));
+  assert.ok(manifest.relationships.systems.some(({ id }) => id === "Pendragon"));
 });
 
 test("release URLs correspond to the manifest version", () => {

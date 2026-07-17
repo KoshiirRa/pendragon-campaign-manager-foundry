@@ -1,6 +1,6 @@
 # Pendragon Campaign Manager for Foundry VTT
 
-A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th Edition system (`pendragon`). It will connect Foundry worlds to the Pendragon Campaign Manager FastAPI backend without exposing Supabase credentials to Foundry clients.
+A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th Edition system (`Pendragon`). It connects Foundry worlds to the Pendragon Campaign Manager FastAPI backend without exposing Supabase credentials to Foundry clients.
 
 ## Status
 

@@ -46,8 +46,8 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
-  if (game.system.id !== "pendragon") {
-    console.warn(`${MODULE_ID} | Expected system 'pendragon', found '${game.system.id}'`);
+  if (game.system.id !== "Pendragon") {
+    console.warn(`${MODULE_ID} | Expected system 'Pendragon', found '${game.system.id}'`);
   }
 
   const module = game.modules.get(MODULE_ID);
