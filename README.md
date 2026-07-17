@@ -36,6 +36,14 @@ As a Gamemaster, open a supported Actor sheet and select the cloud-upload **Send
 
 The module stores the backend character ID as a non-secret Actor flag. Repeating the command updates the same backend character. If the flag is lost, the module recovers the mapping by the Actor UUID to avoid duplicates.
 
+## Diagnostics
+
+Version 0.4.2 logs module lifecycle and Actor UI hook activity to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+
+```js
+game.modules.get("pendragon-campaign-manager").api.diagnostics()
+```
+
 ## Development installation
 
 Copy or link this repository into the Foundry user-data module directory as:

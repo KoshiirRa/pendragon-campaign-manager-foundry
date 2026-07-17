@@ -1,12 +1,19 @@
 import { CampaignApiClient } from "./api-client.mjs";
 import { CampaignManagerConfig } from "./config-app.mjs";
 import { registerActorIntegration } from "./actor-integration.mjs";
+import { logError, logInfo, logWarn } from "./logger.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 const DEFAULT_BACKEND = "https://pendragon-campaign-api-wetwnuz4jq-uc.a.run.app";
 
+logInfo("Main module script loaded.", { version: "0.4.2" });
+
 Hooks.once("init", () => {
-  console.info(`${MODULE_ID} | Initializing`);
+  logInfo("init hook fired.", {
+    foundryVersion: game.version,
+    systemId: game.system.id,
+    systemVersion: game.system.version
+  });
 
   game.settings.register(MODULE_ID, "backendUrl", {
     name: "PCM.Settings.BackendUrl.Name",
@@ -47,8 +54,16 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
+  logInfo("ready hook fired.", {
+    moduleActive: game.modules.get(MODULE_ID)?.active,
+    moduleVersion: game.modules.get(MODULE_ID)?.version,
+    systemId: game.system.id,
+    systemVersion: game.system.version,
+    userId: game.user.id,
+    isGM: game.user.isGM
+  });
   if (game.system.id !== "Pendragon") {
-    console.warn(`${MODULE_ID} | Expected system 'Pendragon', found '${game.system.id}'`);
+    logWarn(`Expected system 'Pendragon', found '${game.system.id}'.`);
   }
 
   const module = game.modules.get(MODULE_ID);
@@ -67,9 +82,16 @@ Hooks.once("ready", () => {
         worldId: game.world.id,
         ...options
       });
-    }
+    },
+    diagnostics: () => diagnostics()
   });
-  registerActorIntegration({ createClient });
+  try {
+    registerActorIntegration({ createClient });
+  } catch (error) {
+    logError("Failed to register Actor synchronization hooks.", error);
+  }
+  logInfo("Module initialization complete. Run this console command for a status report:");
+  console.info(`game.modules.get("${MODULE_ID}").api.diagnostics()`);
 });
 
 function createClient({ authenticated = true } = {}) {
@@ -80,4 +102,37 @@ function createClient({ authenticated = true } = {}) {
     baseUrl: game.settings.get(MODULE_ID, "backendUrl"),
     apiKey: authenticated ? game.settings.get(MODULE_ID, "apiKey") : ""
   });
+}
+
+function diagnostics() {
+  const hookNames = [
+    "getActorSheetHeaderButtons",
+    "getApplicationV1HeaderButtons",
+    "getActorDirectoryEntryContext",
+    "getActorContextOptions",
+    "renderActorSheet"
+  ];
+  const counts = new Map();
+  for (const actor of game.actors) counts.set(actor.type, (counts.get(actor.type) ?? 0) + 1);
+  const report = {
+    foundryVersion: game.version,
+    system: { id: game.system.id, version: game.system.version },
+    module: {
+      id: MODULE_ID,
+      active: game.modules.get(MODULE_ID)?.active,
+      version: game.modules.get(MODULE_ID)?.version
+    },
+    user: { id: game.user.id, isGM: game.user.isGM },
+    configuration: {
+      backendUrl: game.settings.get(MODULE_ID, "backendUrl"),
+      campaignId: game.settings.get(MODULE_ID, "campaignId"),
+      apiKeyConfigured: Boolean(game.settings.get(MODULE_ID, "apiKey"))
+    },
+    actors: Object.fromEntries(counts),
+    hooks: Object.fromEntries(
+      hookNames.map((name) => [name, Hooks.events?.[name]?.length ?? "unknown"])
+    )
+  };
+  logInfo("Diagnostic report (API key value intentionally omitted).", report);
+  return report;
 }

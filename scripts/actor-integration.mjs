@@ -1,11 +1,21 @@
 import { syncActor } from "./actor-sync.mjs";
+import { logError, logInfo } from "./logger.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 const SUPPORTED_TYPES = new Set(["character", "npc", "follower"]);
 
 export function registerActorIntegration({ createClient }) {
+  logInfo("Registering Actor synchronization hooks.");
   const addSheetButton = (application, buttons) => {
     const actor = application.actor;
+    logInfo("Actor sheet header hook fired.", {
+      application: application.constructor?.name,
+      actorId: actor?.id,
+      actorName: actor?.name,
+      actorType: actor?.type,
+      isGM: game.user.isGM,
+      existingButtons: buttons.map((button) => button.class ?? button.label)
+    });
     if (!game.user.isGM || !actor || !SUPPORTED_TYPES.has(actor.type)) return;
     if (buttons.some((button) => button.class === "pcm-sync-actor")) return;
     buttons.unshift({
@@ -19,6 +29,11 @@ export function registerActorIntegration({ createClient }) {
   Hooks.on("getApplicationV1HeaderButtons", addSheetButton);
 
   const addDirectoryOption = (_application, options) => {
+    logInfo("Actor Directory context hook fired.", {
+      application: _application?.constructor?.name,
+      isGM: game.user.isGM,
+      existingOptions: options.map((option) => option.name)
+    });
     if (options.some((option) => option.name === "PCM.Actor.Sync")) return;
     options.push({
       name: "PCM.Actor.Sync",
@@ -32,6 +47,15 @@ export function registerActorIntegration({ createClient }) {
   };
   Hooks.on("getActorDirectoryEntryContext", addDirectoryOption);
   Hooks.on("getActorContextOptions", addDirectoryOption);
+  Hooks.on("renderActorSheet", (application) => {
+    logInfo("Legacy renderActorSheet hook fired.", {
+      application: application.constructor?.name,
+      actorId: application.actor?.id,
+      actorName: application.actor?.name,
+      actorType: application.actor?.type
+    });
+  });
+  logInfo("Actor synchronization hook registration complete.", hookRegistrationCounts());
 }
 
 async function synchronize(actor, createClient) {
@@ -48,8 +72,20 @@ async function synchronize(actor, createClient) {
     const message = result.created ? "PCM.Actor.Created" : "PCM.Actor.Updated";
     ui.notifications.info(game.i18n.format(message, { name: actor.name }));
   } catch (error) {
+    logError(`Actor synchronization failed for ${actor.name}.`, error);
     ui.notifications.error(error.message ?? String(error), { permanent: true });
   }
+}
+
+function hookRegistrationCounts() {
+  const names = [
+    "getActorSheetHeaderButtons",
+    "getApplicationV1HeaderButtons",
+    "getActorDirectoryEntryContext",
+    "getActorContextOptions",
+    "renderActorSheet"
+  ];
+  return Object.fromEntries(names.map((name) => [name, Hooks.events?.[name]?.length ?? "unknown"]));
 }
 
 async function chooseCharacterKind(actor) {

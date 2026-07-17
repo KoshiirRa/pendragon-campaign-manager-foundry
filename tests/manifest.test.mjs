@@ -32,3 +32,10 @@ test("Actor integration supports Pendragon legacy and Foundry v14 hooks", async 
   assert.match(source, /getApplicationV1HeaderButtons/);
   assert.match(source, /getActorContextOptions/);
 });
+
+test("diagnostics never log or return the API key value", async () => {
+  const main = await readFile(new URL("../scripts/main.mjs", import.meta.url), "utf8");
+  assert.match(main, /apiKeyConfigured/);
+  assert.doesNotMatch(main, /apiKey:\s*game\.settings\.get/);
+  assert.match(main, /\.api\.diagnostics\(\)/);
+});
