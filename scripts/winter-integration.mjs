@@ -7,7 +7,7 @@ const syncing = new Set();
 
 export function registerWinterIntegration({ createClient }) {
   const scheduleActor = (actor, reason) => {
-    if (!shouldSynchronizeWinterActor(actor)) return;
+    if (!shouldSynchronizeWinterActor(actor) || !isWinterPhaseComplete(actor)) return;
     clearTimeout(timers.get(actor.id));
     timers.set(actor.id, setTimeout(() => synchronizeWinterActor(actor, reason, createClient), 1500));
   };
@@ -43,6 +43,12 @@ export function shouldSynchronizeWinterActor(actor) {
 
 export function isPendragonGameYearSetting(setting) {
   return setting?.key === "Pendragon.gameYear" && Number.isInteger(Number(setting.value));
+}
+
+export function isWinterPhaseComplete(actor) {
+  const status = actor?.system?.status;
+  return ["train", "economic", "aging", "squireAge", "horseSurv", "familyRoll", "xp"]
+    .every((key) => status?.[key] === false);
 }
 
 async function synchronizeWinterActor(actor, reason, createClient) {
