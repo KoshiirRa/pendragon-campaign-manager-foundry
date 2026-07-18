@@ -69,6 +69,10 @@ export class CampaignApiClient {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors`);
   }
 
+  async getLocation(campaignId, locationId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/locations/${encodeURIComponent(locationId)}`);
+  }
+
   async createManor(campaignId, data) {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors`, { method: "POST", body: data });
   }
@@ -77,8 +81,64 @@ export class CampaignApiClient {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/tenures`, { method: "POST", body: data });
   }
 
+  async listManorTenures(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/tenures`);
+  }
+
+  async listManorResolutions(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/annual-resolutions`);
+  }
+
   async createManorResolution(campaignId, manorId, data) {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/annual-resolutions`, { method: "POST", body: data });
+  }
+
+  async listManorTreasury(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/treasury`);
+  }
+
+  async addManorTreasuryEntry(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/treasury`, { method: "POST", body: data });
+  }
+
+  async listManorAssets(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/assets`);
+  }
+
+  async addManorAsset(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/assets`, { method: "POST", body: data });
+  }
+
+  async addManorAssetEntry(campaignId, manorId, assetId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/assets/${encodeURIComponent(assetId)}/ledger`, { method: "POST", body: data });
+  }
+
+  async listManorHousehold(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/household`);
+  }
+
+  async addManorHouseholdMember(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/household`, { method: "POST", body: data });
+  }
+
+  async listManorImprovements(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/improvements`);
+  }
+
+  async addManorImprovement(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/improvements`, { method: "POST", body: data });
+  }
+
+  async addManorImprovementEntry(campaignId, manorId, improvementId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/improvements/${encodeURIComponent(improvementId)}/ledger`, { method: "POST", body: data });
+  }
+
+  async listManorDefenses(campaignId, manorId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/defenses`);
+  }
+
+  async addManorDefense(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/defenses`, { method: "POST", body: data });
   }
 
   async #request(path, { authenticated = true, method = "GET", body = undefined } = {}) {

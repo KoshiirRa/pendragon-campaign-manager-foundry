@@ -6,7 +6,7 @@ A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th 
 
 ## Status
 
-Version 0.6 provides campaign setup and historical Actor synchronization:
+The current release provides campaign setup and historical Actor synchronization:
 
 - a Foundry v14 ApplicationV2 configuration screen;
 - the live Cloud Run API as the default backend;
@@ -24,7 +24,7 @@ Version 0.6 provides campaign setup and historical Actor synchronization:
 - gear, weapon, and armour inventory state;
 - horse identity, attributes, equipped state, and ownership history.
 
-Journals, household members, wounds, and detailed finances are not synchronized yet.
+Journals are not synchronized yet. Wounds synchronize from Actor snapshots, while household members and detailed estate finances can be recorded through **Manage Manor**.
 
 ## Configure a world
 
@@ -53,7 +53,7 @@ removing a Horse Item closes that horse's current ownership without deleting its
 
 ## Diagnostics
 
-Version 0.9.0 adds a **Manage Manor** Actor-header control for linked characters. It creates a manor and tenure or records an annual economic resolution, including Stewardship outcome, income, expenses, privy funds, famine stage, and population change. The backend additionally supports treasury entries, assets and livestock, household employment, improvements, and layered defenses through its REST API.
+Version 0.10.0 expands the **Manage Manor** Actor-header control into an estate manager. In addition to manor creation, tenure, and annual economic resolution, it records itemized treasury entries, assets and livestock, asset state, household employment, improvements and their condition history, and layered defenses. Existing estate history is summarized before a new append-only record is submitted.
 
 Version 0.8.0 synchronizes History Items into the campaign event timeline, recognizes `source = winter` as Winter Phase participation, and appends changed wound states to the wound ledger. History Item Glory is retained as reported provenance while total Glory reconciliation remains the accounting authority, preventing double counting.
 

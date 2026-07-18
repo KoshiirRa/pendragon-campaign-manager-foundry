@@ -129,6 +129,29 @@ test("posts an annual manor resolution", async () => {
   assert.deepEqual(JSON.parse(request.options.body), data);
 });
 
+test("uses estate history and append-only household endpoints", async () => {
+  const requests = [];
+  const client = new CampaignApiClient({
+    baseUrl: "https://api.example.com",
+    apiKey: "secret-value",
+    fetchImpl: async (url, options) => {
+      requests.push({ url, options });
+      return jsonResponse([]);
+    }
+  });
+  await client.listManorTenures("campaign-1", "manor-1");
+  await client.listManorImprovements("campaign-1", "manor-1");
+  await client.addManorHouseholdMember("campaign-1", "manor-1", {
+    name: "Osric", role: "steward", annual_cost: 1, start_year: 485
+  });
+  assert.match(requests[0].url, /\/manors\/manor-1\/tenures$/);
+  assert.match(requests[1].url, /\/manors\/manor-1\/improvements$/);
+  assert.equal(requests[2].options.method, "POST");
+  assert.deepEqual(JSON.parse(requests[2].options.body), {
+    name: "Osric", role: "steward", annual_cost: 1, start_year: 485
+  });
+});
+
 test("generates API-safe campaign slugs", () => {
   assert.equal(slugifyCampaignName("  The Great Pendragon Campaign!  "), "the-great-pendragon-campaign");
   assert.equal(slugifyCampaignName("Épée & Graal"), "epee-graal");
