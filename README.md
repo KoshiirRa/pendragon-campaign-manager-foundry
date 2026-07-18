@@ -14,17 +14,17 @@ The current release provides campaign setup and historical Actor synchronization
 - campaign creation with automatic selection for the current world;
 - a client-scoped API key that is not synchronized to players;
 - a world-scoped selected campaign ID;
-- a small module API for health, readiness, campaign listing, and campaign retrieval.
+- a small module API for health, readiness, campaign listing, and campaign retrieval;
 - GM-triggered synchronization for Pendragon `character`, `npc`, and `follower` Actors;
 - idempotent updates using Foundry Actor UUIDs and backend character IDs;
-- player-knight versus NPC selection before the first synchronization.
+- player-knight versus NPC selection before the first synchronization;
 - idempotent synchronization of traits, skills, passions, and total Glory;
-- central campaign events for each synchronization that changes historical state.
+- central campaign events for each synchronization that changes historical state;
 - core SIZ, DEX, STR, CON, and APP history;
 - gear, weapon, and armour inventory state;
 - horse identity, attributes, equipped state, and ownership history.
 
-Journals are not synchronized yet. Wounds and squires synchronize from Actor snapshots, while other household members and detailed estate finances can be recorded through **Manage Manor**.
+Journals are not synchronized. History, wounds, family members, horses, inventory, and squires synchronize from Actor snapshots. Other household members and detailed estate finances are recorded through **Manage Manor**. Completing the Pendragon system's Winter Phase synchronizes every already-linked participating Actor and then advances the selected campaign year.
 
 ## Configure a world
 
@@ -51,9 +51,11 @@ not duplicate historical ledger rows.
 Inventory and horse lists are complete snapshots. Removing an inventory Item records quantity zero;
 removing a Horse Item closes that horse's current ownership without deleting its history.
 
-## Diagnostics
+## Current integration details
 
 Version 0.12.0 synchronizes Pendragon `squire` Items as durable NPC identities, append-only yearly state, and effective-dated service to their knight. Age, Squire Skill, knight modifier, Glory, Description, and GM Info are preserved. Removing or transferring a stable squire identity closes the old service without deleting its history.
+
+Manual integration verification uses the stable Foundry PID `i.squire.test-squire`. Initial synchronization, changed-state append, and unchanged-snapshot idempotency have been confirmed for this fixture; retain the PID when testing service departure or transfer behavior.
 
 Version 0.12.2 hooks into the Pendragon system's authoritative Winter Phase close sequence through Foundry's public Setting and World Time hooks. It waits for the GM to turn Winter Phase off, observes Pendragon v14.6 advancing `game.time`, then synchronizes every already-linked character once against the completed year before advancing the selected Campaign Manager campaign. The legacy `gameYear` setting path remains supported. The `history` Item with `system.source = winter` establishes Winter Phase participation. Unlinked Actors are never created automatically, and the module does not replace or modify Pendragon's Winter Phase interface.
 
@@ -65,7 +67,9 @@ Version 0.8.0 synchronizes History Items into the campaign event timeline, recog
 
 It also synchronizes family Items as NPC identities, effective family memberships, parentage, marriages, and unambiguous inheritance claims for an heir with a deceased parent. Enter the family name in the synchronization dialog; leaving it blank skips family memberships while still preserving relationships. Marriage start years are recorded as the first synchronized campaign year because Foundry does not store a marriage year. Family Description is public character information; GM Info is stored as a private GM-only note.
 
-Version 0.9.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+## Diagnostics
+
+The module logs lifecycle, Actor UI hook activity, Winter Phase detection, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()
