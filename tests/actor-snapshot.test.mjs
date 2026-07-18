@@ -74,6 +74,40 @@ test("calculates totals when Foundry prepared values are absent", () => {
   assert.equal(snapshot.glory_total, 0);
 });
 
+test("maps family members and heir status with stable identities", () => {
+  const snapshot = actorToSnapshot(
+    {
+      system: { heir: true },
+      items: [
+        item("family", "Lady Elayne", "i.family.elayne", {
+          relation: "parent",
+          gender: "female",
+          born: 450,
+          died: 485,
+          glory: 3200,
+          blessed: true
+        }),
+        {
+          ...item("family", "Lady Adwen", null, {
+            relation: "spouse",
+            born: 468,
+            barrenMarriage: true
+          }),
+          id: "family-2",
+          uuid: "Actor.test.Item.family-2"
+        }
+      ]
+    },
+    485,
+    { familyName: "de Salisbury" }
+  );
+  assert.equal(snapshot.family_name, "de Salisbury");
+  assert.equal(snapshot.is_heir, true);
+  assert.equal(snapshot.relatives[0].source_key, "Actor.test.Item.family-1");
+  assert.equal(snapshot.relatives[0].death_year, 485);
+  assert.equal(snapshot.relatives[1].barren_marriage, true);
+});
+
 function item(type, name, pid, system) {
   return {
     id: `${type}-1`,

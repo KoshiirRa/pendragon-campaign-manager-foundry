@@ -3,7 +3,7 @@ import { actorToSnapshot } from "./actor-snapshot.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 
-export async function syncActor(actor, { client, campaignId, kind, playerName, worldId }) {
+export async function syncActor(actor, { client, campaignId, kind, playerName, familyName, worldId }) {
   if (!campaignId) throw new Error("Select a Campaign Manager campaign before syncing Actors.");
   const flaggedId = actor.getFlag?.(MODULE_ID, "characterId");
   let existing = null;
@@ -34,11 +34,12 @@ export async function syncActor(actor, { client, campaignId, kind, playerName, w
     : await client.createCharacter(campaignId, payload);
 
   const campaign = await client.getCampaign(campaignId);
-  const snapshot = actorToSnapshot(actor, campaign.current_year);
+  const snapshot = actorToSnapshot(actor, campaign.current_year, { familyName });
   const snapshotResult = await client.syncCharacterSnapshot(campaignId, character.id, snapshot);
 
   await actor.setFlag?.(MODULE_ID, "characterId", character.id);
   await actor.setFlag?.(MODULE_ID, "characterKind", character.kind);
+  await actor.setFlag?.(MODULE_ID, "familyName", familyName?.trim() ?? "");
   await actor.setFlag?.(MODULE_ID, "lastSyncedAt", new Date().toISOString());
   return { character, created: !existing, snapshot: snapshotResult };
 }

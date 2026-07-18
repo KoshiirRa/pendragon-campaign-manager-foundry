@@ -139,6 +139,7 @@ async function chooseCharacterKind(actor) {
   const defaultKind =
     actor.getFlag(MODULE_ID, "characterKind") ??
     (actor.type === "character" && owner ? "player_knight" : "npc");
+  const familyName = actor.getFlag(MODULE_ID, "familyName") ?? "";
   const formData = await foundry.applications.api.DialogV2.input({
     window: { title: game.i18n.localize(linkedId ? "PCM.Actor.Resync" : "PCM.Actor.Sync") },
     content: `
@@ -152,6 +153,10 @@ async function chooseCharacterKind(actor) {
       <div class="form-group">
         <label>${game.i18n.localize("PCM.Actor.PlayerName")}</label>
         <input name="playerName" type="text" value="${escapeHtml(owner?.name ?? "")}">
+      </div>
+      <div class="form-group">
+        <label>Family name</label>
+        <input name="familyName" type="text" value="${escapeHtml(familyName)}" placeholder="Optional; used for family membership">
       </div>`,
     ok: { label: game.i18n.localize("PCM.Actor.SyncNow") },
     rejectClose: false
@@ -166,7 +171,7 @@ export function dialogSelection(formData) {
     if (formData?.object && typeof formData.object === "object") return formData.object[name];
     return formData?.[name];
   };
-  return { kind: value("kind"), playerName: value("playerName") };
+  return { kind: value("kind"), playerName: value("playerName"), familyName: value("familyName") };
 }
 
 function actorFromTarget(target) {

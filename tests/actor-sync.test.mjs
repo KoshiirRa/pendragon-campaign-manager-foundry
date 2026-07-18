@@ -94,6 +94,7 @@ function syncOptions(client) {
     campaignId: "campaign-1",
     kind: "npc",
     playerName: null,
+    familyName: "de Salisbury",
     worldId: "world-1"
   };
 }

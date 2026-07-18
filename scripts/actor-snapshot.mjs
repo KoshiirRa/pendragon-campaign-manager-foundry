@@ -1,6 +1,6 @@
 const SYNCHRONIZED_ITEM_TYPES = new Set(["trait", "skill", "passion"]);
 
-export function actorToSnapshot(actor, effectiveYear) {
+export function actorToSnapshot(actor, effectiveYear, { familyName = null } = {}) {
   const items = Array.from(actor.items ?? []).filter((item) => SYNCHRONIZED_ITEM_TYPES.has(item.type));
   return {
     effective_year: effectiveYear,
@@ -15,7 +15,26 @@ export function actorToSnapshot(actor, effectiveYear) {
     inventory: Array.from(actor.items ?? [])
       .filter((item) => ["gear", "weapon", "armour"].includes(item.type))
       .map(mapInventory),
-    horses: Array.from(actor.items ?? []).filter((item) => item.type === "horse").map(mapHorse)
+    horses: Array.from(actor.items ?? []).filter((item) => item.type === "horse").map(mapHorse),
+    family_name: cleanOptional(familyName),
+    relatives: Array.from(actor.items ?? []).filter((item) => item.type === "family").map(mapRelative),
+    is_heir: Boolean(actor.system?.heir)
+  };
+}
+
+function mapRelative(item) {
+  const system = item.system ?? {};
+  return {
+    source_key: item.uuid || `Item.${item.id}`,
+    name: cleanName(item.name, "Unnamed Relative"),
+    relation: ["parent", "spouse", "child", "other"].includes(system.relation) ? system.relation : "other",
+    gender: cleanOptional(system.gender),
+    birth_year: positiveYear(system.born),
+    death_year: positiveYear(system.died),
+    glory_total: nonnegativeInteger(system.glory),
+    blessed_birth: Boolean(system.blessed),
+    barren_marriage: Boolean(system.barrenMarriage),
+    description: cleanOptional(stripHtml(system.description))
   };
 }
 
@@ -130,6 +149,11 @@ function number(value) {
 
 function nonnegativeInteger(value) {
   return Math.max(0, Math.trunc(number(value)));
+}
+
+function positiveYear(value) {
+  const year = nonnegativeInteger(value);
+  return year > 0 ? year : null;
 }
 
 function cleanName(value, fallback) {
