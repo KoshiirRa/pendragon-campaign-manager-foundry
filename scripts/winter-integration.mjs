@@ -25,7 +25,13 @@ export function registerWinterIntegration({ createClient }) {
     if (winterEndPending) synchronizeCompletedWinter(year, createClient);
     else synchronizeCampaignYear(year, createClient);
   });
-  logInfo("Pendragon Winter Phase end hook registered.");
+  Hooks.on("updateWorldTime", (_worldTime, delta) => {
+    if (!winterEndPending) return;
+    const nextYear = currentPendragonYear();
+    logInfo("World-time advance observed after Winter Phase closure.", { delta, nextYear });
+    synchronizeCompletedWinter(nextYear, createClient);
+  });
+  logInfo("Pendragon Winter Phase end and world-time hooks registered.");
 }
 
 export function shouldSynchronizeWinterActor(actor) {
@@ -56,6 +62,10 @@ export function parsedSettingValue(setting) {
   } catch {
     return value;
   }
+}
+
+export function currentPendragonYear() {
+  return Number(game.time?.components?.year);
 }
 
 async function synchronizeCompletedWinter(nextYear, createClient) {
