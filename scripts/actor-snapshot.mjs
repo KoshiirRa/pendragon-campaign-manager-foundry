@@ -34,7 +34,8 @@ function mapRelative(item) {
     glory_total: nonnegativeInteger(system.glory),
     blessed_birth: Boolean(system.blessed),
     barren_marriage: Boolean(system.barrenMarriage),
-    description: cleanOptional(stripHtml(system.description))
+    description: cleanOptional(stripHtml(system.description)),
+    gm_description: cleanOptional(stripHtml(system.GMdescription))
   };
 }
 

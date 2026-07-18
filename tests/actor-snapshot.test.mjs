@@ -85,7 +85,9 @@ test("maps family members and heir status with stable identities", () => {
           born: 450,
           died: 485,
           glory: 3200,
-          blessed: true
+          blessed: true,
+          description: "<p>Known at court.</p>",
+          GMdescription: "<p>Secret allegiance.</p>"
         }),
         {
           ...item("family", "Lady Adwen", null, {
@@ -105,6 +107,8 @@ test("maps family members and heir status with stable identities", () => {
   assert.equal(snapshot.is_heir, true);
   assert.equal(snapshot.relatives[0].source_key, "Actor.test.Item.family-1");
   assert.equal(snapshot.relatives[0].death_year, 485);
+  assert.equal(snapshot.relatives[0].description, "Known at court.");
+  assert.equal(snapshot.relatives[0].gm_description, "Secret allegiance.");
   assert.equal(snapshot.relatives[1].barren_marriage, true);
 });
 
