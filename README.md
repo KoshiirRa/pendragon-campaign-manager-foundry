@@ -45,7 +45,7 @@ not duplicate historical ledger rows.
 
 ## Diagnostics
 
-Version 0.5.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+Version 0.5.1 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()

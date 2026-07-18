@@ -14,6 +14,19 @@ test("normalizes production and local development URLs", () => {
   assert.throws(() => normalizeBaseUrl("http://api.example.com"), CampaignApiError);
 });
 
+test("binds browser fetch to the global receiver", async () => {
+  const browserLikeFetch = function () {
+    if (this !== globalThis) throw new TypeError("Illegal invocation");
+    return jsonResponse({ status: "ok" });
+  };
+  const client = new CampaignApiClient({
+    baseUrl: "https://api.example.com",
+    apiKey: "",
+    fetchImpl: browserLikeFetch
+  });
+  assert.deepEqual(await client.health(), { status: "ok" });
+});
+
 test("authenticated requests send the API key only in its header", async () => {
   const calls = [];
   const client = new CampaignApiClient({

@@ -11,7 +11,7 @@ export class CampaignApiClient {
   constructor({ baseUrl, apiKey, fetchImpl = globalThis.fetch }) {
     this.baseUrl = normalizeBaseUrl(baseUrl);
     this.apiKey = apiKey?.trim() ?? "";
-    this.fetch = fetchImpl;
+    this.fetch = fetchImpl.bind(globalThis);
   }
 
   async health() {
