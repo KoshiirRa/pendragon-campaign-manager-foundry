@@ -112,6 +112,36 @@ test("maps family members and heir status with stable identities", () => {
   assert.equal(snapshot.relatives[1].barren_marriage, true);
 });
 
+test("maps history, Winter Phase provenance, and wounds", () => {
+  const snapshot = actorToSnapshot(
+    {
+      system: {},
+      items: [
+        item("history", "Winter Phase Passive Glory", null, {
+          year: 485,
+          source: "winter",
+          glory: 120,
+          description: "<p>Winter Phase</p>",
+          GMdescription: "<p>Private outcome</p>"
+        }),
+        item("wound", "Sword Wound", null, {
+          value: 5,
+          treated: true,
+          source: "combat",
+          description: "<p>Left shoulder</p>"
+        })
+      ]
+    },
+    486
+  );
+  assert.equal(snapshot.history[0].year, 485);
+  assert.equal(snapshot.history[0].source, "winter");
+  assert.equal(snapshot.history[0].reported_glory, 120);
+  assert.equal(snapshot.history[0].gm_description, "Private outcome");
+  assert.equal(snapshot.wounds[0].damage, 5);
+  assert.equal(snapshot.wounds[0].treated, true);
+});
+
 function item(type, name, pid, system) {
   return {
     id: `${type}-1`,

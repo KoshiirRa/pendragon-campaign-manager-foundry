@@ -51,9 +51,11 @@ removing a Horse Item closes that horse's current ownership without deleting its
 
 ## Diagnostics
 
-Version 0.7.1 also synchronizes family Items as NPC identities, effective family memberships, parentage, marriages, and unambiguous inheritance claims for an heir with a deceased parent. Enter the family name in the synchronization dialog; leaving it blank skips family memberships while still preserving relationships. Marriage start years are recorded as the first synchronized campaign year because Foundry does not store a marriage year. Family Description is public character information; GM Info is stored as a private GM-only note.
+Version 0.8.0 synchronizes History Items into the campaign event timeline, recognizes `source = winter` as Winter Phase participation, and appends changed wound states to the wound ledger. History Item Glory is retained as reported provenance while total Glory reconciliation remains the accounting authority, preventing double counting.
 
-Version 0.7.1 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+It also synchronizes family Items as NPC identities, effective family memberships, parentage, marriages, and unambiguous inheritance claims for an heir with a deceased parent. Enter the family name in the synchronization dialog; leaving it blank skips family memberships while still preserving relationships. Marriage start years are recorded as the first synchronized campaign year because Foundry does not store a marriage year. Family Description is public character information; GM Info is stored as a private GM-only note.
+
+Version 0.8.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()

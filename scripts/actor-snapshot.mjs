@@ -18,7 +18,34 @@ export function actorToSnapshot(actor, effectiveYear, { familyName = null } = {}
     horses: Array.from(actor.items ?? []).filter((item) => item.type === "horse").map(mapHorse),
     family_name: cleanOptional(familyName),
     relatives: Array.from(actor.items ?? []).filter((item) => item.type === "family").map(mapRelative),
-    is_heir: Boolean(actor.system?.heir)
+    is_heir: Boolean(actor.system?.heir),
+    history: Array.from(actor.items ?? []).filter((item) => item.type === "history").map((item) => mapHistory(item, effectiveYear)),
+    wounds: Array.from(actor.items ?? []).filter((item) => item.type === "wound").map(mapWound)
+  };
+}
+
+function mapHistory(item, effectiveYear) {
+  const system = item.system ?? {};
+  return {
+    source_key: item.uuid || `Item.${item.id}`,
+    year: positiveYear(system.year) ?? effectiveYear,
+    title: cleanName(item.name, "Untitled History Event"),
+    source: cleanOptional(system.source),
+    description: cleanOptional(stripHtml(system.description)),
+    gm_description: cleanOptional(stripHtml(system.GMdescription)),
+    reported_glory: integer(system.glory),
+    favour_value: integer(system.favourValue)
+  };
+}
+
+function mapWound(item) {
+  const system = item.system ?? {};
+  return {
+    source_key: item.uuid || `Item.${item.id}`,
+    damage: nonnegativeInteger(system.value),
+    treated: Boolean(system.treated),
+    wound_source: cleanOptional(system.source),
+    description: cleanOptional(stripHtml(system.description))
   };
 }
 
@@ -150,6 +177,10 @@ function number(value) {
 
 function nonnegativeInteger(value) {
   return Math.max(0, Math.trunc(number(value)));
+}
+
+function integer(value) {
+  return Math.trunc(number(value));
 }
 
 function positiveYear(value) {
