@@ -1,12 +1,13 @@
 import { CampaignApiClient } from "./api-client.mjs";
 import { CampaignManagerConfig } from "./config-app.mjs";
 import { registerActorIntegration } from "./actor-integration.mjs";
+import { registerWinterIntegration } from "./winter-integration.mjs";
 import { logError, logInfo, logWarn } from "./logger.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 const DEFAULT_BACKEND = "https://pendragon-campaign-api-wetwnuz4jq-uc.a.run.app";
 
-logInfo("Main module script loaded.", { version: "0.9.0" });
+logInfo("Main module script loaded.", { version: "0.11.0" });
 
 Hooks.once("init", () => {
   logInfo("init hook fired.", {
@@ -87,6 +88,7 @@ Hooks.once("ready", () => {
   });
   try {
     registerActorIntegration({ createClient });
+    registerWinterIntegration({ createClient });
   } catch (error) {
     logError("Failed to register Actor synchronization hooks.", error);
   }

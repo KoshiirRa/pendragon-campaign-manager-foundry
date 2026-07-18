@@ -53,6 +53,8 @@ removing a Horse Item closes that horse's current ownership without deleting its
 
 ## Diagnostics
 
+Version 0.11.0 hooks into the Pendragon system's existing Winter Phase through Foundry's public Actor, Item, and Setting hooks. While Winter Phase is active, changes to an already-linked character are debounced and synchronized automatically. The `history` Item with `system.source = winter` establishes Winter Phase participation, and the Pendragon `gameYear` advance updates the selected campaign year. Unlinked Actors are never created automatically, and the module does not replace or modify Pendragon's Winter Phase interface.
+
 Version 0.10.0 expands the **Manage Manor** Actor-header control into an estate manager. In addition to manor creation, tenure, and annual economic resolution, it records itemized treasury entries, assets and livestock, asset state, household employment, improvements and their condition history, and layered defenses. Existing estate history is summarized before a new append-only record is submitted.
 
 Estate currency is displayed in Librum, not modern British pounds. One Librum equals 240 denarii; decimal Librum values remain the API storage convention.

@@ -30,6 +30,10 @@ export class CampaignApiClient {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}`);
   }
 
+  async updateCampaign(campaignId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}`, { method: "PATCH", body: data });
+  }
+
   async listCharacters(campaignId) {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/characters`);
   }
