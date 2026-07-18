@@ -20,7 +20,23 @@ export function actorToSnapshot(actor, effectiveYear, { familyName = null } = {}
     relatives: Array.from(actor.items ?? []).filter((item) => item.type === "family").map(mapRelative),
     is_heir: Boolean(actor.system?.heir),
     history: Array.from(actor.items ?? []).filter((item) => item.type === "history").map((item) => mapHistory(item, effectiveYear)),
-    wounds: Array.from(actor.items ?? []).filter((item) => item.type === "wound").map(mapWound)
+    wounds: Array.from(actor.items ?? []).filter((item) => item.type === "wound").map(mapWound),
+    squires: Array.from(actor.items ?? []).filter((item) => item.type === "squire").map(mapSquire)
+  };
+}
+
+function mapSquire(item) {
+  const system = item.system ?? {};
+  return {
+    source_key: sourceKey(item),
+    name: cleanName(item.name, "Unnamed Squire"),
+    category: cleanOptional(system.category),
+    age: nonnegativeInteger(system.age),
+    skill: nonnegativeInteger(system.skill),
+    knight_modifier: integer(system.knightMod),
+    glory: nonnegativeInteger(system.glory),
+    description: cleanOptional(stripHtml(system.description)),
+    gm_description: cleanOptional(stripHtml(system.GMdescription))
   };
 }
 

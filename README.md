@@ -24,7 +24,7 @@ The current release provides campaign setup and historical Actor synchronization
 - gear, weapon, and armour inventory state;
 - horse identity, attributes, equipped state, and ownership history.
 
-Journals are not synchronized yet. Wounds synchronize from Actor snapshots, while household members and detailed estate finances can be recorded through **Manage Manor**.
+Journals are not synchronized yet. Wounds and squires synchronize from Actor snapshots, while other household members and detailed estate finances can be recorded through **Manage Manor**.
 
 ## Configure a world
 
@@ -52,6 +52,8 @@ Inventory and horse lists are complete snapshots. Removing an inventory Item rec
 removing a Horse Item closes that horse's current ownership without deleting its history.
 
 ## Diagnostics
+
+Version 0.12.0 synchronizes Pendragon `squire` Items as durable NPC identities, append-only yearly state, and effective-dated service to their knight. Age, Squire Skill, knight modifier, Glory, Description, and GM Info are preserved. Removing or transferring a stable squire identity closes the old service without deleting its history.
 
 Version 0.11.2 hooks into the Pendragon system's authoritative Winter Phase close sequence through Foundry's public Setting hook. It waits for the GM to turn Winter Phase off and for Pendragon to finish resetting phase state and advancing `gameYear`. It then synchronizes every already-linked character once, records the completed results against the old campaign year, and finally advances the selected Campaign Manager campaign to the new year. The `history` Item with `system.source = winter` establishes Winter Phase participation. Unlinked Actors are never created automatically, and the module does not replace or modify Pendragon's Winter Phase interface.
 

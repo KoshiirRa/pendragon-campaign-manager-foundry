@@ -142,6 +142,21 @@ test("maps history, Winter Phase provenance, and wounds", () => {
   assert.equal(snapshot.wounds[0].treated, true);
 });
 
+test("maps squires with stable identity and Winter Phase state", () => {
+  const snapshot = actorToSnapshot({
+    system: { glory: 0, stats: {} },
+    items: [item("squire", "Osric", "i.squire.osric", {
+      category: "squire", age: 16, skill: 15, knightMod: 2, glory: 120,
+      description: "Loyal attendant", GMdescription: "Secretly ambitious"
+    })]
+  }, 486);
+  assert.deepEqual(snapshot.squires[0], {
+    source_key: "i.squire.osric", name: "Osric", category: "squire", age: 16,
+    skill: 15, knight_modifier: 2, glory: 120,
+    description: "Loyal attendant", gm_description: "Secretly ambitious"
+  });
+});
+
 function item(type, name, pid, system) {
   return {
     id: `${type}-1`,
