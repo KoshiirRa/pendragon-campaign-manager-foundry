@@ -2,34 +2,21 @@ import { syncActor } from "./actor-sync.mjs";
 import { logError, logInfo } from "./logger.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
-const timers = new Map();
-const syncing = new Set();
+let winterEndPending = false;
+let synchronizing = false;
 
 export function registerWinterIntegration({ createClient }) {
-  const scheduleActor = (actor, reason) => {
-    if (!shouldSynchronizeWinterActor(actor) || !isWinterPhaseComplete(actor)) return;
-    clearTimeout(timers.get(actor.id));
-    timers.set(actor.id, setTimeout(() => synchronizeWinterActor(actor, reason, createClient), 1500));
-  };
-
-  Hooks.on("createItem", (item) => {
-    if (item.type === "history" && item.system?.source === "winter") scheduleActor(item.parent, "winter-phase-start");
-    else if (isWinterActive()) scheduleActor(item.parent, `create-${item.type}`);
-  });
-  Hooks.on("updateItem", (item) => {
-    if (isWinterActive() || item.system?.source === "winter") scheduleActor(item.parent, `update-${item.type}`);
-  });
-  Hooks.on("deleteItem", (item) => {
-    if (isWinterActive()) scheduleActor(item.parent, `delete-${item.type}`);
-  });
-  Hooks.on("updateActor", (actor) => {
-    if (isWinterActive() && !syncing.has(actor.id)) scheduleActor(actor, "update-actor");
-  });
   Hooks.on("updateSetting", (setting) => {
+    if (isPendragonWinterSetting(setting)) {
+      if (setting.value === false) winterEndPending = true;
+      return;
+    }
     if (!isPendragonGameYearSetting(setting)) return;
-    synchronizeCampaignYear(Number(setting.value), createClient);
+    const year = Number(setting.value);
+    if (winterEndPending) synchronizeCompletedWinter(year, createClient);
+    else synchronizeCampaignYear(year, createClient);
   });
-  logInfo("Pendragon Winter Phase synchronization hooks registered.");
+  logInfo("Pendragon Winter Phase end hook registered.");
 }
 
 export function shouldSynchronizeWinterActor(actor) {
@@ -41,38 +28,39 @@ export function shouldSynchronizeWinterActor(actor) {
   );
 }
 
+export function isPendragonWinterSetting(setting) {
+  return setting?.key === "Pendragon.winter" && typeof setting.value === "boolean";
+}
+
 export function isPendragonGameYearSetting(setting) {
   return setting?.key === "Pendragon.gameYear" && Number.isInteger(Number(setting.value));
 }
 
-export function isWinterPhaseComplete(actor) {
-  const status = actor?.system?.status;
-  return ["train", "economic", "aging", "squireAge", "horseSurv", "familyRoll", "xp"]
-    .every((key) => status?.[key] === false);
-}
-
-async function synchronizeWinterActor(actor, reason, createClient) {
-  timers.delete(actor.id);
-  if (syncing.has(actor.id) || !shouldSynchronizeWinterActor(actor)) return;
-  syncing.add(actor.id);
+async function synchronizeCompletedWinter(nextYear, createClient) {
+  if (!isPrimaryGM() || synchronizing || nextYear < 1 || nextYear > 9999) return;
+  synchronizing = true;
+  const actors = game.actors.contents.filter(shouldSynchronizeWinterActor);
+  let completed = 0;
   try {
-    const result = await syncActor(actor, {
-      client: createClient(),
-      campaignId: game.settings.get(MODULE_ID, "campaignId"),
-      worldId: game.world.id,
-      kind: actor.getFlag(MODULE_ID, "characterKind"),
-      familyName: actor.getFlag(MODULE_ID, "familyName")
-    });
-    logInfo("Winter Phase Actor synchronization completed.", {
-      actorId: actor.id,
-      reason,
-      changed: result.snapshot?.changed
-    });
+    for (const actor of actors) {
+      await syncActor(actor, {
+        client: createClient(),
+        campaignId: game.settings.get(MODULE_ID, "campaignId"),
+        worldId: game.world.id,
+        kind: actor.getFlag(MODULE_ID, "characterKind"),
+        familyName: actor.getFlag(MODULE_ID, "familyName")
+      });
+      completed += 1;
+    }
+    await synchronizeCampaignYear(nextYear, createClient);
+    winterEndPending = false;
+    logInfo("Completed Winter Phase synchronized.", { actors: completed, nextYear });
+    ui.notifications.info(`Campaign Manager synchronized Winter Phase for ${completed} linked character${completed === 1 ? "" : "s"}.`);
   } catch (error) {
-    logError(`Winter Phase synchronization failed for ${actor.name}.`, error);
-    ui.notifications.error(`Campaign Manager could not synchronize ${actor.name}'s Winter Phase: ${error.message ?? error}`);
+    logError("Completed Winter Phase synchronization failed.", error);
+    ui.notifications.error(`Campaign Manager could not synchronize the completed Winter Phase: ${error.message ?? error}`, { permanent: true });
   } finally {
-    syncing.delete(actor.id);
+    synchronizing = false;
   }
 }
 
@@ -80,17 +68,8 @@ async function synchronizeCampaignYear(year, createClient) {
   if (!isPrimaryGM() || year < 1 || year > 9999) return;
   const campaignId = game.settings.get(MODULE_ID, "campaignId");
   if (!campaignId) return;
-  try {
-    await createClient().updateCampaign(campaignId, { current_year: year });
-    logInfo("Campaign year synchronized from Pendragon Winter Phase.", { campaignId, year });
-  } catch (error) {
-    logError("Campaign year synchronization failed.", error);
-    ui.notifications.error(`Campaign Manager could not update the campaign year: ${error.message ?? error}`);
-  }
-}
-
-function isWinterActive() {
-  return game.system.id === "Pendragon" && game.settings.get("Pendragon", "winter") === true;
+  await createClient().updateCampaign(campaignId, { current_year: year });
+  logInfo("Campaign year synchronized from Pendragon.", { campaignId, year });
 }
 
 function isPrimaryGM() {

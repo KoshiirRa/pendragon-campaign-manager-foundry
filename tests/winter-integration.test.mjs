@@ -2,11 +2,17 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 globalThis.game = { user: { id: "gm-1", isGM: true }, users: { activeGM: { id: "gm-1" } } };
-const { isPendragonGameYearSetting, isWinterPhaseComplete, shouldSynchronizeWinterActor } = await import("../scripts/winter-integration.mjs");
+const { isPendragonGameYearSetting, isPendragonWinterSetting, shouldSynchronizeWinterActor } = await import("../scripts/winter-integration.mjs");
 
 test("recognizes Pendragon game-year setting updates", () => {
   assert.equal(isPendragonGameYearSetting({ key: "Pendragon.gameYear", value: 486 }), true);
   assert.equal(isPendragonGameYearSetting({ key: "Pendragon.winter", value: false }), false);
+});
+
+test("recognizes the Pendragon Winter Phase end setting", () => {
+  assert.equal(isPendragonWinterSetting({ key: "Pendragon.winter", value: false }), true);
+  assert.equal(isPendragonWinterSetting({ key: "Pendragon.winter", value: true }), true);
+  assert.equal(isPendragonWinterSetting({ key: "Pendragon.gameYear", value: 486 }), false);
 });
 
 test("automatically synchronizes only linked character Actors for a GM", () => {
@@ -24,14 +30,4 @@ test("automatically synchronizes only linked character Actors for a GM", () => {
   game.users.activeGM = { id: "gm-2" };
   assert.equal(shouldSynchronizeWinterActor(actor), false);
   game.users.activeGM = { id: "gm-1" };
-});
-
-test("waits for every Pendragon Winter Phase step to complete", () => {
-  const status = {
-    train: false, economic: false, aging: false, squireAge: false,
-    horseSurv: false, familyRoll: false, xp: false
-  };
-  assert.equal(isWinterPhaseComplete({ system: { status } }), true);
-  assert.equal(isWinterPhaseComplete({ system: { status: { ...status, train: true } } }), false);
-  assert.equal(isWinterPhaseComplete({ system: { status: { ...status, familyRoll: undefined } } }), false);
 });
