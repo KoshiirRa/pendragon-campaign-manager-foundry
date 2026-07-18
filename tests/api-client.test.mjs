@@ -113,6 +113,22 @@ test("posts a character snapshot to the idempotent synchronization endpoint", as
   assert.deepEqual(JSON.parse(request.options.body), snapshot);
 });
 
+test("posts an annual manor resolution", async () => {
+  let request;
+  const client = new CampaignApiClient({
+    baseUrl: "https://api.example.com",
+    apiKey: "secret-value",
+    fetchImpl: async (url, options) => {
+      request = { url, options };
+      return jsonResponse({ id: "resolution-1", in_game_year: 485 }, 201);
+    }
+  });
+  const data = { in_game_year: 485, roll_result: "success", income: 2, expenses: 1, privy_funds: 1 };
+  await client.createManorResolution("campaign-1", "manor-1", data);
+  assert.equal(request.url, "https://api.example.com/api/v1/campaigns/campaign-1/manors/manor-1/annual-resolutions");
+  assert.deepEqual(JSON.parse(request.options.body), data);
+});
+
 test("generates API-safe campaign slugs", () => {
   assert.equal(slugifyCampaignName("  The Great Pendragon Campaign!  "), "the-great-pendragon-campaign");
   assert.equal(slugifyCampaignName("Épée & Graal"), "epee-graal");

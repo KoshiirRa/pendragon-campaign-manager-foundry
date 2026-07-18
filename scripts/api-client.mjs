@@ -65,6 +65,22 @@ export class CampaignApiClient {
     return this.#request("/api/v1/campaigns", { method: "POST", body: data });
   }
 
+  async listManors(campaignId) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors`);
+  }
+
+  async createManor(campaignId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors`, { method: "POST", body: data });
+  }
+
+  async addManorTenure(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/tenures`, { method: "POST", body: data });
+  }
+
+  async createManorResolution(campaignId, manorId, data) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/annual-resolutions`, { method: "POST", body: data });
+  }
+
   async #request(path, { authenticated = true, method = "GET", body = undefined } = {}) {
     if (!this.baseUrl) throw new CampaignApiError("Campaign Manager API URL is not configured.");
     if (authenticated && !this.apiKey) {

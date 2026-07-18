@@ -51,11 +51,13 @@ removing a Horse Item closes that horse's current ownership without deleting its
 
 ## Diagnostics
 
+Version 0.9.0 adds a **Manage Manor** Actor-header control for linked characters. It creates a manor and tenure or records an annual economic resolution, including Stewardship outcome, income, expenses, privy funds, famine stage, and population change. The backend additionally supports treasury entries, assets and livestock, household employment, improvements, and layered defenses through its REST API.
+
 Version 0.8.0 synchronizes History Items into the campaign event timeline, recognizes `source = winter` as Winter Phase participation, and appends changed wound states to the wound ledger. History Item Glory is retained as reported provenance while total Glory reconciliation remains the accounting authority, preventing double counting.
 
 It also synchronizes family Items as NPC identities, effective family memberships, parentage, marriages, and unambiguous inheritance claims for an heir with a deceased parent. Enter the family name in the synchronization dialog; leaving it blank skips family memberships while still preserving relationships. Marriage start years are recorded as the first synchronized campaign year because Foundry does not store a marriage year. Family Description is public character information; GM Info is stored as a private GM-only note.
 
-Version 0.8.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+Version 0.9.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()

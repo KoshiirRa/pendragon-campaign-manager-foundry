@@ -1,5 +1,6 @@
 import { syncActor } from "./actor-sync.mjs";
 import { logError, logInfo } from "./logger.mjs";
+import { manageActorManor } from "./manor-manager.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 const SUPPORTED_TYPES = new Set(["character", "npc", "follower"]);
@@ -17,6 +18,9 @@ export function registerActorIntegration({ createClient }) {
       existingButtons: buttons.map((button) => button.class ?? button.label)
     });
     if (!game.user.isGM || !actor || !SUPPORTED_TYPES.has(actor.type)) return;
+    if (actor.getFlag(MODULE_ID, "characterId") && !buttons.some((button) => button.class === "pcm-manage-manor")) {
+      buttons.unshift({ label: "Manage Manor", class: "pcm-manage-manor", icon: "fa-solid fa-castle", onclick: () => manageManor(actor, createClient) });
+    }
     if (buttons.some((button) => button.class === "pcm-sync-actor")) return;
     buttons.unshift({
       label: actor.getFlag(MODULE_ID, "characterId") ? "PCM.Actor.Resync" : "PCM.Actor.Sync",
@@ -40,6 +44,9 @@ export function registerActorIntegration({ createClient }) {
       existingControls: controls.map((control) => control.action ?? control.label)
     });
     if (!game.user.isGM || actor?.documentName !== "Actor" || !SUPPORTED_TYPES.has(actor.type)) return;
+    if (actor.getFlag(MODULE_ID, "characterId") && !controls.some((control) => control.action === "pcm-manage-manor")) {
+      controls.unshift({ action: "pcm-manage-manor", icon: "fa-solid fa-castle", label: "Manage Manor", visible: true, onClick: () => manageManor(actor, createClient) });
+    }
     if (controls.some((control) => control.action === "pcm-sync-actor")) return;
     controls.unshift({
       action: "pcm-sync-actor",
@@ -79,6 +86,16 @@ export function registerActorIntegration({ createClient }) {
     });
   });
   logInfo("Actor synchronization hook registration complete.", hookRegistrationCounts());
+}
+
+async function manageManor(actor, createClient) {
+  try {
+    const result = await manageActorManor(actor, { client: createClient(), campaignId: game.settings.get(MODULE_ID, "campaignId") });
+    if (result) ui.notifications.info("Manor record saved.");
+  } catch (error) {
+    logError(`Manor management failed for ${actor.name}.`, error);
+    ui.notifications.error(error.message ?? String(error), { permanent: true });
+  }
 }
 
 async function synchronize(actor, createClient) {
