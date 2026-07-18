@@ -7,8 +7,17 @@ let synchronizing = false;
 
 export function registerWinterIntegration({ createClient }) {
   Hooks.on("updateSetting", (setting) => {
+    if (setting?.key?.startsWith("Pendragon.")) {
+      logInfo("Pendragon setting update observed.", {
+        key: setting.key,
+        value: parsedSettingValue(setting)
+      });
+    }
     if (isPendragonWinterSetting(setting)) {
-      if (setting.value === false) winterEndPending = true;
+      if (parsedSettingValue(setting) === false) {
+        winterEndPending = true;
+        logInfo("Winter Phase closure detected; waiting for game-year advance.");
+      }
       return;
     }
     if (!isPendragonGameYearSetting(setting)) return;
@@ -29,11 +38,24 @@ export function shouldSynchronizeWinterActor(actor) {
 }
 
 export function isPendragonWinterSetting(setting) {
-  return setting?.key === "Pendragon.winter" && typeof setting.value === "boolean";
+  return setting?.key === "Pendragon.winter" && typeof parsedSettingValue(setting) === "boolean";
 }
 
 export function isPendragonGameYearSetting(setting) {
-  return setting?.key === "Pendragon.gameYear" && Number.isInteger(Number(setting.value));
+  return (
+    setting?.key === "Pendragon.gameYear" &&
+    Number.isInteger(Number(parsedSettingValue(setting)))
+  );
+}
+
+export function parsedSettingValue(setting) {
+  const value = setting?.value;
+  if (typeof value !== "string") return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
 }
 
 async function synchronizeCompletedWinter(nextYear, createClient) {
