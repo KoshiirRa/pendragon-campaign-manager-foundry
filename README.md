@@ -55,6 +55,8 @@ removing a Horse Item closes that horse's current ownership without deleting its
 
 Version 0.10.0 expands the **Manage Manor** Actor-header control into an estate manager. In addition to manor creation, tenure, and annual economic resolution, it records itemized treasury entries, assets and livestock, asset state, household employment, improvements and their condition history, and layered defenses. Existing estate history is summarized before a new append-only record is submitted.
 
+Estate currency is displayed in Librum, not modern British pounds. One Librum equals 240 denarii; decimal Librum values remain the API storage convention.
+
 Version 0.8.0 synchronizes History Items into the campaign event timeline, recognizes `source = winter` as Winter Phase participation, and appends changed wound states to the wound ledger. History Item Glory is retained as reported provenance while total Glory reconciliation remains the accounting authority, preventing double counting.
 
 It also synchronizes family Items as NPC identities, effective family memberships, parentage, marriages, and unambiguous inheritance claims for an heir with a deceased parent. Enter the family name in the synchronization dialog; leaving it blank skips family memberships while still preserving relationships. Marriage start years are recorded as the first synchronized campaign year because Foundry does not store a marriage year. Family Description is public character information; GM Info is stored as a private GM-only note.

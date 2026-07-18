@@ -110,7 +110,7 @@ function selectionForm(manors) {
 function createForm(year) { return `${group("Name", inputField("name"))}${group("Description", textarea("description"))}${money("Customary income", "customaryIncome")}${money("Assized rent", "assizedRent")}${num("Population", "population")}${num("Acreage", "acreage")}${num("Base Defensive Value", "baseDefensiveValue", 1)}${num("Start year", "year", year)}${group("Tenure type", inputField("tenureType", "grant"))}${group("Terms", textarea("terms"))}${group("GM notes", textarea("notes"))}`; }
 
 function actionForm(action, e, year) {
-  const summary = `<div class="pcm-estate-summary"><strong>${escape(e.name)}</strong> — ${e.resolutions.length} annual results; ${e.assets.length} assets; ${e.household.length} household records; ${e.improvements.length} improvements; ${e.defenses.length} defenses; treasury balance GBP ${sum(e.treasury).toFixed(2)}</div><hr>`;
+  const summary = `<div class="pcm-estate-summary"><strong>${escape(e.name)}</strong> — ${e.resolutions.length} annual results; ${e.assets.length} assets; ${e.household.length} household records; ${e.improvements.length} improvements; ${e.defenses.length} defenses; treasury balance ${sum(e.treasury).toFixed(2)} Librum</div><hr>`;
   const common = num("Year", "year", year);
   if (action === "annual") return summary + common + group("Stewardship result", `<select name="result"><option>critical</option><option>success</option><option>failure</option><option>fumble</option></select>`) + num("Stewardship value", "skill") + group("Actor served as steward", `<input name="selfSteward" type="checkbox">`) + money("Income", "income", 0) + money("Expenses", "expenses", 0) + money("Privy funds", "privyFunds", 0) + num("Famine stage", "famineStage", 0) + num("Population change", "populationChange", 0) + group("Notes", textarea("notes"));
   if (action === "treasury") return summary + common + money("Amount (+ income, - expense)", "amount", 0) + group("Category", inputField("category")) + group("Description", textarea("description"));
@@ -136,7 +136,7 @@ function group(label, control) { return `<div class="form-group"><label>${label}
 function inputField(name, value = "") { return `<input name="${name}" value="${escape(value)}">`; }
 function textarea(name) { return `<textarea name="${name}"></textarea>`; }
 function num(label, name, value = "") { return group(label, `<input name="${name}" type="number" value="${escape(value)}">`); }
-function money(label, name, value = "") { return group(`${label} (GBP)`, `<input name="${name}" type="number" step="0.01" value="${escape(value)}">`); }
+function money(label, name, value = "") { return group(`${label} (Librum)`, `<input name="${name}" type="number" step="0.01" value="${escape(value)}">`); }
 function select(name, entries) { return `<select name="${name}">${options(entries)}</select>`; }
 function options(entries) { return entries.map((entry) => `<option value="${escape(entry.id)}">${escape(entry.name)}</option>`).join(""); }
 function escape(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }

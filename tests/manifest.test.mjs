@@ -50,3 +50,9 @@ test("diagnostics never log or return the API key value", async () => {
   assert.doesNotMatch(main, /apiKey:\s*game\.settings\.get/);
   assert.match(main, /\.api\.diagnostics\(\)/);
 });
+
+test("estate UI uses Pendragon currency terminology", async () => {
+  const source = await readFile(new URL("../scripts/manor-manager.mjs", import.meta.url), "utf8");
+  assert.match(source, /Librum/);
+  assert.doesNotMatch(source, /GBP|British pound|£/i);
+});
