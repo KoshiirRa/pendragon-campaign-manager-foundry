@@ -7,7 +7,61 @@ export function actorToSnapshot(actor, effectiveYear) {
     traits: items.filter((item) => item.type === "trait").map(mapTrait),
     skills: items.filter((item) => item.type === "skill").map(mapSkill),
     passions: items.filter((item) => item.type === "passion").map(mapPassion),
-    glory_total: nonnegativeInteger(actor.system?.glory ?? actor.system?.gloryTotal)
+    glory_total: nonnegativeInteger(actor.system?.glory ?? actor.system?.gloryTotal),
+    stats: ["siz", "dex", "str", "con", "app"].map((code) => ({
+      code,
+      value: nonnegativeInteger(actor.system?.stats?.[code]?.total ?? actor.system?.stats?.[code]?.value)
+    })),
+    inventory: Array.from(actor.items ?? [])
+      .filter((item) => ["gear", "weapon", "armour"].includes(item.type))
+      .map(mapInventory),
+    horses: Array.from(actor.items ?? []).filter((item) => item.type === "horse").map(mapHorse)
+  };
+}
+
+function mapInventory(item) {
+  const system = item.system ?? {};
+  return {
+    source_key: sourceKey(item),
+    item_type: item.type,
+    name: cleanName(item.name, "Unnamed Item"),
+    description: cleanOptional(stripHtml(system.description)),
+    quantity: nonnegativeInteger(system.quantity ?? 1),
+    equipped: Boolean(system.equipped),
+    libra: nonnegativeInteger(system.libra),
+    denarii: nonnegativeInteger(system.denarii),
+    skill: cleanOptional(system.skillName ?? system.skill),
+    damage_formula: cleanOptional(system.dmgForm ?? system.damageRoll),
+    weapon_range: cleanOptional(system.range),
+    mounted_use: cleanOptional(system.mounted),
+    melee: system.melee !== false,
+    armour_points: nonnegativeInteger(system.ap),
+    material: cleanOptional(system.material),
+    is_shield: item.type === "armour" && system.type === false
+  };
+}
+
+function mapHorse(item) {
+  const system = item.system ?? {};
+  return {
+    source_key: sourceKey(item),
+    name: cleanOptional(system.horseName) ?? cleanName(item.name, "Unnamed Horse"),
+    breed: cleanOptional(system.breed),
+    colour: cleanOptional(system.colour),
+    personality: cleanOptional(system.personality),
+    features: cleanOptional(system.features),
+    description: cleanOptional(stripHtml(system.description)),
+    siz: nonnegativeInteger(system.siz),
+    dex: nonnegativeInteger(system.dex),
+    str: nonnegativeInteger(system.str),
+    con: nonnegativeInteger(system.con),
+    hp: nonnegativeInteger(system.hp),
+    max_hp: nonnegativeInteger(system.maxHP),
+    move: nonnegativeInteger(system.move),
+    armour: nonnegativeInteger(system.armour),
+    horse_armour: nonnegativeInteger(system.horseArmour),
+    age: nonnegativeInteger(system.age),
+    equipped: Boolean(system.equipped)
   };
 }
 
@@ -85,4 +139,13 @@ function cleanName(value, fallback) {
 function cleanOptional(value) {
   const result = typeof value === "string" ? value.trim() : "";
   return result || null;
+}
+
+function stripHtml(value) {
+  return String(value ?? "")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .trim();
 }

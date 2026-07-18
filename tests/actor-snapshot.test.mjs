@@ -36,6 +36,25 @@ test("maps prepared Pendragon traits, skills, passions, and Glory", () => {
   assert.equal(snapshot.glory_total, 1910);
 });
 
+test("maps core statistics, inventory, armour, and horses", () => {
+  const snapshot = actorToSnapshot(
+    {
+      system: { stats: { siz: { total: 18 }, dex: { total: 17 }, str: { total: 12 }, con: { total: 18 }, app: { total: 8 } } },
+      items: [
+        item("gear", "Tent", null, { quantity: 1, libra: 1, description: "<p>Canvas</p>" }),
+        item("armour", "Shield", null, { equipped: true, ap: 6, type: false, material: "Wood" }),
+        item("horse", "Courser", null, { horseName: "Bucephalus", breed: "Courser", siz: 30, hp: 45, maxHP: 45, equipped: true })
+      ]
+    },
+    485
+  );
+  assert.deepEqual(snapshot.stats.map((stat) => stat.value), [18, 17, 12, 18, 8]);
+  assert.equal(snapshot.inventory[0].description, "Canvas");
+  assert.equal(snapshot.inventory[1].is_shield, true);
+  assert.equal(snapshot.horses[0].name, "Bucephalus");
+  assert.equal(snapshot.horses[0].siz, 30);
+});
+
 test("calculates totals when Foundry prepared values are absent", () => {
   const snapshot = actorToSnapshot(
     {

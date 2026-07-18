@@ -4,7 +4,7 @@ A Foundry Virtual Tabletop v14 companion module for the community Pendragon 6th 
 
 ## Status
 
-Version 0.5 provides campaign setup and historical Actor synchronization:
+Version 0.6 provides campaign setup and historical Actor synchronization:
 
 - a Foundry v14 ApplicationV2 configuration screen;
 - the live Cloud Run API as the default backend;
@@ -18,8 +18,11 @@ Version 0.5 provides campaign setup and historical Actor synchronization:
 - player-knight versus NPC selection before the first synchronization.
 - idempotent synchronization of traits, skills, passions, and total Glory;
 - central campaign events for each synchronization that changes historical state.
+- core SIZ, DEX, STR, CON, and APP history;
+- gear, weapon, and armour inventory state;
+- horse identity, attributes, equipped state, and ownership history.
 
-Journals, equipment, horses, household members, and wounds are not synchronized yet.
+Journals, household members, wounds, and detailed finances are not synchronized yet.
 
 ## Configure a world
 
@@ -43,9 +46,12 @@ stable PID or Item UUID. It also sends the Actor's calculated total Glory. The b
 values that changed since the last snapshot, so repeatedly synchronizing an unchanged sheet does
 not duplicate historical ledger rows.
 
+Inventory and horse lists are complete snapshots. Removing an inventory Item records quantity zero;
+removing a Horse Item closes that horse's current ownership without deleting its history.
+
 ## Diagnostics
 
-Version 0.5.2 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
+Version 0.6.0 logs module lifecycle, Actor UI hook activity, and snapshot results to the browser JavaScript console with the prefix `Pendragon Campaign Manager |`. It never logs the API-key value. Run this console command for a structured report:
 
 ```js
 game.modules.get("pendragon-campaign-manager").api.diagnostics()
