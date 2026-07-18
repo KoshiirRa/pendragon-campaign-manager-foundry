@@ -136,7 +136,9 @@ async function chooseCharacterKind(actor) {
     (user) => !user.isGM && actor.testUserPermission(user, "OWNER")
   );
   const linkedId = actor.getFlag(MODULE_ID, "characterId");
-  const defaultKind = actor.type === "character" && owner ? "player_knight" : "npc";
+  const defaultKind =
+    actor.getFlag(MODULE_ID, "characterKind") ??
+    (actor.type === "character" && owner ? "player_knight" : "npc");
   const formData = await foundry.applications.api.DialogV2.input({
     window: { title: game.i18n.localize(linkedId ? "PCM.Actor.Resync" : "PCM.Actor.Sync") },
     content: `

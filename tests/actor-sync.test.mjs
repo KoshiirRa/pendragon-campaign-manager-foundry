@@ -34,6 +34,26 @@ test("updates the mapped character instead of creating a duplicate", async () =>
   assert.equal(update.name, "Merlin");
 });
 
+test("preserves the immutable database kind when the resync dialog guesses incorrectly", async () => {
+  const flags = new Map([["characterId", "character-1"]]);
+  const actor = fakeActor(flags);
+  let update;
+  const client = {
+    getCharacter: async () => ({
+      id: "character-1",
+      kind: "player_knight",
+      player_name: "Alice"
+    }),
+    updateCharacter: async (_campaignId, _characterId, payload) => {
+      update = payload;
+      return { id: "character-1", kind: "player_knight", player_name: "Alice", ...payload };
+    }
+  };
+  await syncActor(actor, syncOptions(client));
+  assert.equal(update.player_name, "Alice");
+  assert.equal(flags.get("characterKind"), "player_knight");
+});
+
 test("recovers a mapping by Foundry UUID when the Actor flag is absent", async () => {
   const actor = fakeActor(new Map());
   let created = false;
