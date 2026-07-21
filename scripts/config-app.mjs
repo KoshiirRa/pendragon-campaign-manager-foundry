@@ -35,7 +35,7 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
     return {
       ...context,
       backendUrl: game.settings.get(MODULE_ID, "backendUrl"),
-      apiKey: game.settings.get(MODULE_ID, "apiKey"),
+      apiKeyConfigured: Boolean(game.settings.get(MODULE_ID, "apiKey")),
       campaignId: game.settings.get(MODULE_ID, "campaignId"),
       campaigns: this.campaigns ?? [],
       buttons: [
@@ -51,7 +51,7 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
     try {
       const client = new CampaignApiClient({
         baseUrl: data.get("backendUrl"),
-        apiKey: data.get("apiKey")
+        apiKey: resolveApiKey(data.get("apiKey"))
       });
       await client.health();
       this.campaigns = await client.listCampaigns();
@@ -68,7 +68,9 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
       const values = formData.object;
       const backendUrl = normalizeBaseUrl(values.backendUrl);
       await game.settings.set(MODULE_ID, "backendUrl", backendUrl);
-      await game.settings.set(MODULE_ID, "apiKey", values.apiKey?.trim() ?? "");
+      const submittedApiKey = values.apiKey?.trim() ?? "";
+      if (values.clearApiKey) await game.settings.set(MODULE_ID, "apiKey", "");
+      else if (submittedApiKey) await game.settings.set(MODULE_ID, "apiKey", submittedApiKey);
       await game.settings.set(MODULE_ID, "campaignId", values.campaignId?.trim() ?? "");
       ui.notifications.info(game.i18n.localize("PCM.Config.Saved"));
       await this.close();
@@ -90,7 +92,7 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
 
     try {
       const backendUrl = normalizeBaseUrl(data.get("backendUrl"));
-      const apiKey = data.get("apiKey")?.trim() ?? "";
+      const apiKey = resolveApiKey(data.get("apiKey"));
       const client = new CampaignApiClient({ baseUrl: backendUrl, apiKey });
       const campaign = await client.createCampaign({
         name,
@@ -108,6 +110,10 @@ export class CampaignManagerConfig extends HandlebarsApplicationMixin(Applicatio
       notifyError(error);
     }
   }
+}
+
+function resolveApiKey(submittedValue) {
+  return submittedValue?.trim() || game.settings.get(MODULE_ID, "apiKey");
 }
 
 async function saveConnectionSettings({ backendUrl, apiKey, campaignId }) {

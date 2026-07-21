@@ -5,6 +5,8 @@
   "PCM.Settings.CampaignId.Hint": "Database campaign UUID associated with this Foundry world.",
   "PCM.Settings.ApiKey.Name": "Campaign Manager API Key",
   "PCM.Settings.ApiKey.Hint": "Stored only in this GM browser. It is not synchronized to players or other Gamemasters.",
+  "PCM.Settings.ApiKey.ConfiguredHint": "A key is saved in this GM browser. Leave this field blank to keep it.",
+  "PCM.Settings.ApiKey.Clear": "Remove the saved key from this browser",
   "PCM.Config.Title": "Pendragon Campaign Manager",
   "PCM.Config.Open": "Configure Connection",
   "PCM.Config.Hint": "Connect this world to the persistent campaign backend.",

@@ -12,9 +12,13 @@
   <div class="form-group">
     <label for="pcm-api-key">{{localize "PCM.Settings.ApiKey.Name"}}</label>
     <div class="form-fields">
-      <input id="pcm-api-key" name="apiKey" type="password" value="{{apiKey}}" autocomplete="off" required>
+      <input id="pcm-api-key" name="apiKey" type="password" value="" autocomplete="new-password" {{#unless apiKeyConfigured}}required{{/unless}}>
     </div>
     <p class="hint">{{localize "PCM.Settings.ApiKey.Hint"}}</p>
+    {{#if apiKeyConfigured}}<p class="hint">{{localize "PCM.Settings.ApiKey.ConfiguredHint"}}</p>{{/if}}
+    {{#if apiKeyConfigured}}
+      <label class="checkbox"><input name="clearApiKey" type="checkbox"> {{localize "PCM.Settings.ApiKey.Clear"}}</label>
+    {{/if}}
   </div>
 
   <div class="form-group">

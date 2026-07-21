@@ -12,6 +12,9 @@ test("normalizes production and local development URLs", () => {
   assert.equal(normalizeBaseUrl("https://api.example.com/"), "https://api.example.com");
   assert.equal(normalizeBaseUrl("http://localhost:8000/"), "http://localhost:8000");
   assert.throws(() => normalizeBaseUrl("http://api.example.com"), CampaignApiError);
+  assert.throws(() => normalizeBaseUrl("https://project.supabase.co"), /not directly to Supabase/);
+  assert.throws(() => normalizeBaseUrl("https://user:pass@api.example.com"), /must not contain/);
+  assert.throws(() => normalizeBaseUrl("https://api.example.com?key=secret"), /must not contain/);
 });
 
 test("binds browser fetch to the global receiver", async () => {
@@ -43,6 +46,9 @@ test("authenticated requests send the API key only in its header", async () => {
   assert.equal(calls[0].url, "https://api.example.com/api/v1/campaigns");
   assert.equal(calls[0].options.headers["X-API-Key"], "secret-value");
   assert.ok(!calls[0].url.includes("secret-value"));
+  assert.equal(calls[0].options.credentials, "omit");
+  assert.equal(calls[0].options.referrerPolicy, "no-referrer");
+  assert.equal(calls[0].options.cache, "no-store");
 });
 
 test("health checks do not send the API key", async () => {

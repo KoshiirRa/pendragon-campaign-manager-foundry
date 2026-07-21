@@ -36,6 +36,14 @@ Journals are not synchronized. History, wounds, family members, horses, inventor
 6. Select **Test and Load Campaigns**, choose the campaign, and save.
 
 The API key uses Foundry's client setting storage. Each GM browser must configure it independently. It is never stored in the world database or sent to player clients.
+The configuration screen never renders a saved key back into the page; leave the blank key field
+unchanged to retain the value already stored in that GM browser. To replace it, enter the new key
+and save; use **Remove the saved key** to clear it. The module accepts only HTTPS backends (apart from loopback development), rejects known
+Supabase Data API hosts, and sends authenticated requests without cookies, referrers, or caching.
+
+Do not paste a Supabase `anon` key, service-role key, database password, or connection string into
+Foundry. The required value is the Campaign Manager application's `X-API-Key`, and the URL must be
+the FastAPI/Cloud Run endpoint.
 
 ## Synchronize an Actor
 

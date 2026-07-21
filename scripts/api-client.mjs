@@ -160,7 +160,10 @@ export class CampaignApiClient {
       response = await this.fetch(`${this.baseUrl}${path}`, {
         method,
         headers,
-        body: body === undefined ? undefined : JSON.stringify(body)
+        body: body === undefined ? undefined : JSON.stringify(body),
+        cache: "no-store",
+        credentials: "omit",
+        referrerPolicy: "no-referrer"
       });
     } catch (error) {
       throw new CampaignApiError(`Could not reach Campaign Manager: ${error.message}`, {
@@ -184,8 +187,18 @@ export function normalizeBaseUrl(value) {
   const input = value?.trim();
   if (!input) return "";
   const url = new URL(input);
+  if (url.username || url.password || url.search || url.hash) {
+    throw new CampaignApiError(
+      "Campaign Manager API URL must not contain credentials, a query string, or a fragment."
+    );
+  }
   if (url.protocol !== "https:" && !isLocalDevelopmentHost(url)) {
     throw new CampaignApiError("Campaign Manager API URL must use HTTPS.");
+  }
+  if (isSupabaseDataApiHost(url.hostname)) {
+    throw new CampaignApiError(
+      "Connect to the Campaign Manager FastAPI backend, not directly to Supabase."
+    );
   }
   return url.toString().replace(/\/$/, "");
 }
@@ -213,4 +226,9 @@ async function readPayload(response) {
 
 function isLocalDevelopmentHost(url) {
   return url.protocol === "http:" && ["localhost", "127.0.0.1", "::1"].includes(url.hostname);
+}
+
+function isSupabaseDataApiHost(hostname) {
+  const host = hostname.toLowerCase();
+  return host === "supabase.co" || host.endsWith(".supabase.co") || host.endsWith(".supabase.in");
 }

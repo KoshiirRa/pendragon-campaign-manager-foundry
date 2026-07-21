@@ -51,6 +51,14 @@ test("diagnostics never log or return the API key value", async () => {
   assert.match(main, /\.api\.diagnostics\(\)/);
 });
 
+test("configuration does not render the stored API key into the DOM", async () => {
+  const template = await readFile(new URL("../templates/config.hbs", import.meta.url), "utf8");
+  const config = await readFile(new URL("../scripts/config-app.mjs", import.meta.url), "utf8");
+  assert.doesNotMatch(template, /value="\{\{apiKey\}\}"/);
+  assert.doesNotMatch(config, /apiKey:\s*game\.settings\.get/);
+  assert.match(config, /apiKeyConfigured/);
+});
+
 test("estate UI uses Pendragon currency terminology", async () => {
   const source = await readFile(new URL("../scripts/manor-manager.mjs", import.meta.url), "utf8");
   assert.match(source, /Librum/);
