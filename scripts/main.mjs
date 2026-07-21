@@ -7,7 +7,7 @@ import { logError, logInfo, logWarn } from "./logger.mjs";
 const MODULE_ID = "pendragon-campaign-manager";
 const DEFAULT_BACKEND = "https://pendragon-campaign-api-wetwnuz4jq-uc.a.run.app";
 
-logInfo("Main module script loaded.", { version: "0.12.2" });
+logInfo("Main module script loaded.", { version: "0.12.3" });
 
 Hooks.once("init", () => {
   logInfo("init hook fired.", {

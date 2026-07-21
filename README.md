@@ -61,6 +61,11 @@ removing a Horse Item closes that horse's current ownership without deleting its
 
 ## Current integration details
 
+Version 0.12.3 hardens connection credential handling. Saved API keys are no longer rendered into
+the configuration page, can be explicitly removed from the current GM browser, and are sent only to
+validated FastAPI HTTPS endpoints with cookies, referrers, and request caching disabled. Known
+Supabase Data API hosts and URLs containing embedded credentials are rejected.
+
 Version 0.12.0 synchronizes Pendragon `squire` Items as durable NPC identities, append-only yearly state, and effective-dated service to their knight. Age, Squire Skill, knight modifier, Glory, Description, and GM Info are preserved. Removing or transferring a stable squire identity closes the old service without deleting its history.
 
 Manual integration verification uses the stable Foundry PID `i.squire.test-squire`. Initial synchronization, changed-state append, and unchanged-snapshot idempotency have been confirmed for this fixture; retain the PID when testing service departure or transfer behavior.
