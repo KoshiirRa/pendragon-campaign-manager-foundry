@@ -7,13 +7,55 @@ the tagged source diff.
 
 ## Reviewed baseline
 
-- Latest reviewed upstream release: `14.9`
-- Upstream tag commit: `6830dba83dee00f0a04e04f93ed55a1bea39af35`
-- Review completed: 2026-08-18
+- Latest reviewed upstream release: `14.12`
+- Upstream tag commit: `8c0b539a1ea247a4f9f423e22415faa5d13fc006`
+- Review completed: 2026-09-01
 - Companion module version reviewed: `0.12.3`
 - Result: compatible; no module or backend implementation change required
 
 ## Release reviews
+
+### Pendragon 14.12
+
+Compared tagged source `14.11...14.12` in addition to reading the release notes.
+
+- The functional change is limited to CSS variables and styling that keep
+  Character Creation text visible in dark mode.
+- Winter Phase completion, World Time, hooks, Application APIs, Actor and Item
+  data models, and all synchronization contracts are unchanged.
+- The system manifest remains compatible with Foundry v14 (`minimum` and
+  `maximum` 14; verified build `14.367`). No backend or module implementation
+  change is required.
+
+### Pendragon 14.11
+
+Compared tagged source `14.10...14.11` in addition to reading the release notes.
+
+- The Skill Selection dialog is now resizable and scrollable. Character
+  Creation now returns a pass/fail label for each knighthood prerequisite and
+  displays it in a tooltip.
+- These sheet and dialog changes do not alter stored traits, passions, skills,
+  Glory, or the Actor/Item data consumed by synchronization.
+- Winter Phase completion, World Time, hooks, and the system manifest's
+  Foundry v14 compatibility remain unchanged. No backend or module
+  implementation change is required.
+
+### Pendragon 14.10
+
+Compared tagged source `14.9...14.10` in addition to reading the release notes.
+
+- Upstream roll, Ideal, follower-sheet, and Winter Phase lookups now tolerate
+  Actors and Items whose `flags.Pendragon.pidFlag` path is absent. The companion
+  module already treats PIDs as optional and falls back to Foundry UUIDs or Item
+  IDs for stable synchronization identity.
+- The included GM macro can add missing PIDs to world Actors and Items. This is
+  an upstream repair tool and does not change the module's idempotent mapping or
+  the Campaign Manager API contract.
+- Winter Phase still advances World Time through the existing flow. Family,
+  history, horses, wounds, squires, inventory, traits, passions, skills, and
+  Glory data models used by synchronization are unchanged.
+- Default Actor artwork, localization, instructions, pack content, CSS, and the
+  verified Foundry build update to `14.367` require no backend or module change.
 
 ### Pendragon 14.9
 
