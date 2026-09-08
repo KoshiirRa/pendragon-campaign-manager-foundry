@@ -15,7 +15,7 @@ export function actorToSnapshot(actor, effectiveYear, { familyName = null } = {}
     inventory: Array.from(actor.items ?? [])
       .filter((item) => ["gear", "weapon", "armour"].includes(item.type))
       .map(mapInventory),
-    horses: Array.from(actor.items ?? []).filter((item) => item.type === "horse").map(mapHorse),
+    horses: Array.from(actor.items ?? []).filter((item) => item.type === "horse").map((item) => mapHorse(item, actor.flags?.Pendragon?.currentHorse)),
     family_name: cleanOptional(familyName),
     relatives: Array.from(actor.items ?? []).filter((item) => item.type === "family").map(mapRelative),
     is_heir: Boolean(actor.system?.heir),
@@ -104,7 +104,7 @@ function mapInventory(item) {
   };
 }
 
-function mapHorse(item) {
+function mapHorse(item, currentHorse) {
   const system = item.system ?? {};
   return {
     source_key: sourceKey(item),
@@ -124,7 +124,10 @@ function mapHorse(item) {
     armour: nonnegativeInteger(system.armour),
     horse_armour: nonnegativeInteger(system.horseArmour),
     age: nonnegativeInteger(system.age),
-    equipped: Boolean(system.equipped)
+    // Pendragon 14.13 stores horse selection on the Actor; older systems use the Item.
+    equipped: currentHorse === undefined
+      ? Boolean(system.equipped)
+      : Boolean(item.id && currentHorse === item.id)
   };
 }
 

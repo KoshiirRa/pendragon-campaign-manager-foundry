@@ -13,6 +13,63 @@ the tagged source diff.
 - Companion module version reviewed: `0.12.3`
 - Result: compatible; no module or backend implementation change required
 
+## Reconciliation pending publication
+
+Source review completed on 2026-09-08 for releases
+[14.13](https://github.com/cragstone/Pendragon/releases/tag/14.13) and
+[14.14](https://github.com/cragstone/Pendragon/releases/tag/14.14), using release
+notes and tagged source comparisons
+[14.12...14.13](https://github.com/cragstone/Pendragon/compare/14.12...14.13) and
+[14.13...14.14](https://github.com/cragstone/Pendragon/compare/14.13...14.14).
+The reviewed baseline above remains unchanged until publication is verified.
+
+### Pendragon 14.13
+
+Tag commit: `0291f41ccfbab9a0b8958e790bf87b7cb15ddd44`.
+
+- HorseData removes `system.equipped`; both character sheets now select a horse
+  through `flags.Pendragon.currentHorse`. Module 0.12.4 maps that Item ID to the
+  existing API `equipped` field, with legacy fallback when the flag is absent.
+  Selection is independent of mounted status. Horse identity, ownership, age
+  and remaining attributes retain their mappings; the new `born` field does not
+  replace `age`. No backend API or database change is needed.
+- Character Sheet V2 inherits ActorSheetV2 through PendragonActorSheet and keeps
+  the public ApplicationV2 header-control contract used by the module. V1 remains
+  the default with a sheet-switch control. Some V2 upstream actions remain
+  unavailable; users can switch to V1. Live UI verification remains pending.
+- Winter Phase completion, World Time, calendar settings and their hook source
+  files are unchanged. Family and squire collections are reorganized for sheet
+  display without replacing the embedded Items used by snapshots.
+- HistoryData clears descriptions duplicated by the Item title. The module
+  already preserves the title separately and accepts an empty description;
+  History Item identity, year, source and reported Glory retain their mappings.
+- Wound/healing actions update the existing wound value/treated fields and
+  remove healed wounds; snapshot semantics remain compatible. Trait, passion,
+  skill and total Glory mappings remain compatible. Derived actor data moves
+  into CharacterData without changing the fields consumed by synchronization.
+- Combat action/card logic, damage calculations, weapon capability getters,
+  PID editor construction, migration null guards, localization, templates and
+  styling do not require additional synchronization changes. Weapon selection
+  is distinct from inventory equipped state; weapon/armour equipment toggles
+  still update their existing Item field.
+- The manifest continues to target Foundry 14, verified `14.367`.
+
+### Pendragon 14.14
+
+Tag commit: `885eb96e635abd80462e6fddb5f0a6e4f2e6198b`.
+
+- CharacterData adds non-persisted empty defaults for class, culture, homeland
+  and religion IDs/names to fix character-creation completion detection.
+- Bio birth/death controls, localized sheet labels, effects layout and other
+  presentation fixes preserve the snapshot contract. No additional module or
+  backend change is required beyond the 14.13 horse adapter.
+- Winter Phase, World Time and Foundry 14 manifest compatibility remain intact.
+
+Validation: all 41 module tests passed on the Linux development VM with Node
+22.23.2, including three new horse-selection regressions and existing snapshot,
+manifest, ApplicationV2 and Winter Phase coverage. Live Foundry and database
+checks were not performed. No backend deployment is required.
+
 ## Release reviews
 
 ### Pendragon 14.12

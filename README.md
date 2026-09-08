@@ -59,6 +59,23 @@ not duplicate historical ledger rows.
 Inventory and horse lists are complete snapshots. Removing an inventory Item records quantity zero;
 removing a Horse Item closes that horse's current ownership without deleting its history.
 
+## Pendragon 14.13 and 14.14: horse selection
+
+Install module **0.12.4** when using Pendragon 14.13 or 14.14. Select the current
+horse on the character sheet, then ask the GM to **Send to Campaign Manager**.
+Both character sheet versions use the same Actor selection. The selected horse
+is recorded as equipped even while the knight is dismounted. Older systems keep
+using each Horse Item's equipped checkbox. Resynchronizing corrects current
+state by appending history; earlier records remain intact.
+
+Character Sheet V2 does not yet expose all V1 actions. Switch back to V1 for
+missing upstream actions. Campaign Manager header controls continue to use the
+public ApplicationV2 hook. Live Foundry UI verification of these releases is
+still pending; automated snapshot and Winter Phase tests cover the module code.
+
+Developer and API mapping details are in
+[the synchronization contract](docs/synchronization-contract.md).
+
 ## Current integration details
 
 Version 0.12.3 hardens connection credential handling. Saved API keys are no longer rendered into

@@ -167,3 +167,30 @@ function item(type, name, pid, system) {
     flags: pid ? { Pendragon: { pidFlag: { id: pid } } } : {}
   };
 }
+
+test("maps current horse selection independently of mounted status and stale equipped fields", () => {
+  const first = item("horse", "Courser", "i.horse.courser", { equipped: false });
+  const second = { ...item("horse", "Rouncy", "i.horse.rouncy", { equipped: true }), id: "horse-2" };
+  const actor = { items: [first, second], flags: { Pendragon: { currentHorse: first.id } }, statuses: new Set() };
+  assert.deepEqual(actorToSnapshot(actor, 486).horses.map(h => h.equipped), [true, false]);
+  actor.flags.Pendragon.currentHorse = second.id;
+  assert.deepEqual(actorToSnapshot(actor, 486).horses.map(h => h.equipped), [false, true]);
+  assert.equal(actorToSnapshot(actor, 486).horses[0].source_key, "i.horse.courser");
+});
+
+test("handles modern horses without equipped fields and cleared or stale selections", () => {
+  const horse = item("horse", "Courser", null, {});
+  for (const selected of [horse.id, "deleted-horse", "", null]) {
+    const actor = { items: [horse], flags: { Pendragon: { currentHorse: selected } } };
+    assert.equal(actorToSnapshot(actor, 486).horses[0].equipped, selected === horse.id);
+  }
+});
+
+test("preserves legacy horse equipment when the Actor selection is absent", () => {
+  const horse = item("horse", "Courser", null, { equipped: true });
+  assert.equal(actorToSnapshot({ items: [horse] }, 486).horses[0].equipped, true);
+  horse.system.equipped = false;
+  assert.equal(actorToSnapshot({ items: [horse], flags: {} }, 486).horses[0].equipped, false);
+  delete horse.system.equipped;
+  assert.equal(actorToSnapshot({ items: [horse] }, 486).horses[0].equipped, false);
+});
