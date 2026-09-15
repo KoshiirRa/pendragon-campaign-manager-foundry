@@ -59,9 +59,27 @@ not duplicate historical ledger rows.
 Inventory and horse lists are complete snapshots. Removing an inventory Item records quantity zero;
 removing a Horse Item closes that horse's current ownership without deleting its history.
 
-## Pendragon 14.13 and 14.14: horse selection
+## Pendragon 14.16: NPC privacy and estates
 
-Install module **0.12.4** when using Pendragon 14.13 or 14.14. Select the current
+Install module **0.12.5** before synchronizing NPCs on Pendragon 14.16.
+Only NPC **Player Notes** populate the API public description; **GM Notes**
+remain in Foundry and are not uploaded. Empty Player Notes clear the public
+description on resync. Older NPCs without Player Notes also send no public
+description: copy only deliberately public text into Player Notes after upgrading.
+Follower descriptions and character backgrounds keep their existing mappings.
+
+If an NPC was synchronized with an older module, ask the GM to review its
+Campaign Manager public description and resync with 0.12.5. This overwrites the
+current description; it cannot retract text already viewed or exported.
+
+The new upstream Manor/Barony Actors, Background Items, estate links and
+Improvements are not automatically synchronized. Continue using **Manage Manor**
+for Campaign Manager estate records. Feast Glory uses ordinary History Items
+and is included on the next Actor or Winter Phase synchronization.
+
+## Pendragon 14.13 and later: horse selection
+
+Install module **0.12.5** when using Pendragon 14.13 or later. Select the current
 horse on the character sheet, then ask the GM to **Send to Campaign Manager**.
 Both character sheet versions use the same Actor selection. The selected horse
 is recorded as equipped even while the knight is dismounted. Older systems keep

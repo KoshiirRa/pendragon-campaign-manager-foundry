@@ -47,7 +47,10 @@ export function characterUpdatePayload(payload) {
 }
 
 function descriptionFor(type, system) {
-  const value = type === "character" ? system.background || system.features : system.description;
+  // NPC description is GM-only in Pendragon 14.16. Never use it as public fallback.
+  const value = type === "character"
+    ? system.background || system.features
+    : type === "npc" ? system.playerNotes : system.description;
   return textOrNull(stripHtml(value));
 }
 

@@ -1,6 +1,6 @@
 # Foundry synchronization compatibility
 
-Module 0.12.4 preserves the existing Campaign Manager snapshot API schema.
+Module 0.12.5 preserves the existing Campaign Manager snapshot API schema.
 The horse snapshot `equipped` boolean represents the Actor's selected horse on
 Pendragon 14.13 and later. Compare `flags.Pendragon.currentHorse` to the embedded
 Horse Item ID, not its PID or UUID. Selection is independent of mounted status.
@@ -18,3 +18,23 @@ regressions cover selection changes, dismounted selection, absent legacy fields,
 cleared/deleted selections and legacy compatibility. Winter Phase tests remain
 part of the full suite. Foundry UI and live database verification are separate
 from these automated checks and were not performed in this reconciliation.
+
+## NPC public description contract (Pendragon 14.16)
+
+For NPC Actors, map only `system.playerNotes` to `public_description`.
+Never fall back to `system.description`: upstream now labels it GM Notes.
+Missing, null, empty and whitespace-only Player Notes map to explicit null,
+including on PATCH, clearing a previously synchronized public description.
+This conservative behavior also applies to legacy NPCs without Player Notes.
+No GM notes are uploaded or moved into metadata. Character background/features
+and follower description mappings are unchanged.
+
+The existing create/PATCH API contract accepts nullable public descriptions;
+no backend implementation or deployment change is required. Regression tests
+cover create mapping, PATCH null clearing, missing/blank notes and followers.
+Resync corrects current stored descriptions, not earlier disclosures or exports.
+
+Upstream 14.16 manor/barony Actors and background/manorImp Items are outside
+the character snapshot allowlist. Estate links are not ownership transactions;
+Manage Manor remains the explicit backend estate workflow. Item-derived trait,
+passion and skill totals and Feast History Glory retain the existing mapping.

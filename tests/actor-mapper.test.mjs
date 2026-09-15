@@ -39,7 +39,7 @@ test("maps NPC and follower actors without player data", () => {
       uuid: "Actor.npc1",
       type: "npc",
       name: "Bandit",
-      system: { description: "<p>Dangerous &amp; desperate.</p>" }
+      system: { playerNotes: "<p>Dangerous &amp; desperate.</p>", description: "Secret allegiance" }
     },
     { kind: "npc" }
   );
@@ -69,4 +69,24 @@ test("requires a player name and rejects unsupported Actor types", () => {
 
 test("update payload omits immutable character kind", () => {
   assert.deepEqual(characterUpdatePayload({ kind: "npc", name: "Merlin" }), { name: "Merlin" });
+});
+
+test("NPC public descriptions never fall back to GM notes", () => {
+  for (const playerNotes of [undefined, null, "", "   "]) {
+    const payload = actorToCharacterPayload({
+      id: "npc", uuid: "Actor.npc", type: "npc", name: "NPC",
+      system: { playerNotes, description: "Secret allegiance" }
+    }, { kind: "npc" });
+    assert.equal(payload.public_description, null);
+    assert.equal(JSON.stringify(payload).includes("Secret allegiance"), false);
+    assert.equal(characterUpdatePayload(payload).public_description, null);
+  }
+});
+
+test("follower descriptions retain their public mapping", () => {
+  const payload = actorToCharacterPayload({
+    id: "follower", uuid: "Actor.follower", type: "follower", name: "Follower",
+    system: { description: "<p>Public follower description.</p>" }
+  }, { kind: "npc" });
+  assert.equal(payload.public_description, "Public follower description.");
 });

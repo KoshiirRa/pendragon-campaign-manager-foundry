@@ -7,13 +7,13 @@ the tagged source diff.
 
 ## Reviewed baseline
 
-- Latest reviewed upstream release: `14.12`
-- Upstream tag commit: `8c0b539a1ea247a4f9f423e22415faa5d13fc006`
-- Review completed: 2026-09-01
-- Companion module version reviewed: `0.12.3`
-- Result: compatible; no module or backend implementation change required
+- Latest reviewed upstream release: `14.14`
+- Upstream tag commit: `885eb96e635abd80462e6fddb5f0a6e4f2e6198b`
+- Review completed: 2026-09-15
+- Companion module version reviewed: `0.12.4`
+- Result: compatible with module 0.12.4 horse-selection fix; no backend change
 
-## Reconciliation pending publication
+## Pendragon 14.13-14.14 publication verified
 
 Source review completed on 2026-09-08 for releases
 [14.13](https://github.com/cragstone/Pendragon/releases/tag/14.13) and
@@ -21,7 +21,9 @@ Source review completed on 2026-09-08 for releases
 notes and tagged source comparisons
 [14.12...14.13](https://github.com/cragstone/Pendragon/compare/14.12...14.13) and
 [14.13...14.14](https://github.com/cragstone/Pendragon/compare/14.13...14.14).
-The reviewed baseline above remains unchanged until publication is verified.
+Module v0.12.4 publication verified on 2026-09-15: tag resolves to
+`1fcc1a677c86b33a90401779f6cd69aec9b08933`; downloaded ZIP contains the
+horse adapter, root manifest and integration documentation.
 
 ### Pendragon 14.13
 
@@ -186,3 +188,53 @@ Pendragon advances the year with `game.time.set({ year })`, and the module
 observes `updateWorldTime` while retaining the legacy serialized-setting path.
 That compatibility is implemented in companion module version `0.12.2` and
 remains present in `0.12.3`.
+
+## Pendragon 14.15-14.16 reconciliation pending publication
+
+Reviewed release notes and actual tagged source comparisons:
+[14.14...14.15](https://github.com/cragstone/Pendragon/compare/14.14...14.15)
+and [14.15...14.16](https://github.com/cragstone/Pendragon/compare/14.15...14.16).
+The baseline remains 14.14 until module 0.12.5 publication is verified.
+
+### Pendragon 14.15
+
+Feast Deck controls and Geniality live in Combat/Combatant flags and chat cards,
+outside the snapshot contract. FeastGlory.createAwards calls the existing
+Actor.addHistoryEvent, so awarded Glory and History Items synchronize normally
+on the next explicit sync or Winter Phase completion. No adapter change needed.
+
+### Pendragon 14.16
+
+Tag commit: `ac631ab23ea8bf0a7bc72404df22a094055be1ee`.
+
+- NPC sheets now label system.description GM Notes and introduce playerNotes.
+  The previous mapper sent description as public_description. Module 0.12.5
+  fixes this privacy incompatibility: NPCs send only playerNotes, with explicit
+  null for absent/empty notes and no GM-note fallback, even for legacy NPCs.
+  Existing current descriptions can be corrected by resync; prior disclosures
+  or exported copies cannot be retracted. No live campaign data was inspected.
+- Trait, passion and skill totals move from Actor preparation to Item models.
+  Their prepared total/oppvalue fields and formulas remain consumed directly;
+  NPC/follower totals now include modifiers rather than only base values.
+- New manor/barony Actors, background/manorImp Items and character estate UUID
+  links are additive, outside the character sync allowlist. They do not replace
+  family, horse, history, wound, squire or inventory Items. Automatic estate
+  import is not implemented; use Manage Manor for backend estate records.
+- Family/relationship drop handling adds estate support without replacing
+  existing snapshot collections. Horse selection remains currentHorse.
+  New weapon special and skill/trait npcSource fields do not change mappings.
+- Winter Phase and World Time source files are unchanged. gameYear is only
+  relocated in settings registration; existing modern and legacy hooks remain.
+- Sheet registration adds estate sheets; supported character/NPC sheets still
+  use the public ApplicationV2 header contract. GM-tab visibility, Help links,
+  display settings, styles, translations and estate calculations require no
+  further module change.
+- Manifest retains system ID Pendragon and Foundry minimum/maximum 14, verified
+  14.367. String compatibility versions and new document types remain compatible.
+
+Validation: all 43 module tests passed on dev-vm using Node 22.23.2, including
+NPC privacy/null-clearing and follower regressions plus horse, snapshot, manifest,
+ApplicationV2 and Winter Phase coverage. Backend nullable public_description and
+PATCH exclude_unset behavior support this change without schema or service edits.
+Developer/API contract and player upgrade instructions were updated in this
+module. Live Foundry UI and PostgreSQL end-to-end checks remain unperformed.
