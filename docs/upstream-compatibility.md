@@ -238,3 +238,69 @@ ApplicationV2 and Winter Phase coverage. Backend nullable public_description and
 PATCH exclude_unset behavior support this change without schema or service edits.
 Developer/API contract and player upgrade instructions were updated in this
 module. Live Foundry UI and PostgreSQL end-to-end checks remain unperformed.
+
+
+## Pendragon 14.17-14.19 reconciliation pending publication
+
+Reviewed on 2026-09-22 using live GitHub release notes and tagged source diffs
+[14.16...14.17](https://github.com/cragstone/Pendragon/compare/14.16...14.17),
+[14.17...14.18](https://github.com/cragstone/Pendragon/compare/14.17...14.18),
+and [14.18...14.19](https://github.com/cragstone/Pendragon/compare/14.18...14.19).
+Rechecked the pending 14.15-14.16 privacy fix against source and API schemas.
+
+### Pendragon 14.17
+
+Tag commit: `5549071ab244bcff1e121f181babd4db6f8dc5c0`.
+
+Battle encounters and Encounter NPC references become name/PID/UUID objects,
+with priority-based lookup and UUID fallback. These Actors are outside the
+module character allowlist; synchronized character/Item identities are unchanged.
+The upstream migration processes world and eligible compendium Actors.
+Its getUpdatesFor function references undefined newPID instead of newPid when
+resolving old references, which can abort migration. This remains in 14.18 and
+is corrected in 14.19. Back up worlds before upgrading; prefer 14.19 over
+14.17/14.18. Campaign Manager does not run or repair this upstream migration.
+Character creation resolves compendium UUIDs asynchronously, and unowned Weapon
+sheets use optional Actor access. Neither changes the API snapshot contract.
+
+### Pendragon 14.18
+
+Tag commit: `a3506f1a1a1948e3f1c7b8467af41341d366b30d`.
+
+New combat actions, movement/armour helpers, unarmed damage handling and chat-card
+outcomes use existing horse, equipment and skill fields. They do not change
+stored snapshot schemas, wound synchronization or Winter Phase completion.
+No additional adapter change is needed; the upstream migration warning above
+also applies to this release.
+
+### Pendragon 14.19
+
+Tag commit: `3a17744b047f7dc525572d3f19d7a4242a56b698`.
+
+- A new updateWorldTime listener reinitializes Actors and rerenders character
+  sheets so derived age reflects the current year. Character age is declared
+  non-persisted; the module continues to send born as birth_year. The listener
+  does not write a setting or advance time again, so it does not introduce a
+  second Winter Phase completion. Winter Phase and calendar source files are
+  unchanged across 14.14...14.19; game.time.set and the winter-setting closure
+  sequence remain authoritative. The existing module only responds to modern
+  World Time changes when Winter Phase closure is pending; arbitrary GM year
+  changes are not a new automatic campaign-year synchronization feature.
+- Skill drops convert Item documents to source objects before calculating
+  starting values. Localized categoryLabels are additive; the mapper still uses
+  categories and prepared total. Follower modifier defaults become zero and
+  auto-calculation toggles preserve computed HP; stat field paths are unchanged.
+- Feast/Glory socket refresh uses system.Pendragon; History creation still calls
+  addHistoryEvent. Total Glory and history provenance mapping remain unchanged.
+- Battle opening gains UUID fallback, and the migration fixes newPid casing.
+  No backend or module migration should duplicate these upstream operations.
+- Family/history/horse/wound/squire/inventory models consumed by the module are
+  unchanged. No new ApplicationV2 header contract is introduced.
+- Manifest keeps system ID Pendragon, Foundry minimum/maximum 14 and verified
+  build 14.368. No change to the companion relationship or API routes is needed.
+
+Validation: all 43 module tests passed on dev-vm with Node 22.23.2 on 2026-09-22.
+The backend CharacterCreate/CharacterUpdate nullable public_description and
+service PATCH exclude_unset behavior were checked. No backend implementation
+change or deployment is required. Live Foundry hook ordering, UI, upstream world
+migration and PostgreSQL end-to-end behavior were not exercised.

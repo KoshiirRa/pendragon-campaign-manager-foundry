@@ -38,3 +38,15 @@ Upstream 14.16 manor/barony Actors and background/manorImp Items are outside
 the character snapshot allowlist. Estate links are not ownership transactions;
 Manage Manor remains the explicit backend estate workflow. Item-derived trait,
 passion and skill totals and Feast History Glory retain the existing mapping.
+
+
+## Pendragon 14.17-14.19
+
+Battle/Encounter name/PID/UUID references remain outside the character snapshot.
+The upstream migration bug in 14.17/14.18 is fixed in 14.19; the companion module
+must not duplicate that migration. Skill categoryLabels and character age are
+derived presentation fields; retain categories, prepared totals and born mappings.
+The added World Time listener refreshes Actors without emitting a second time
+advance. Modern automatic synchronization remains gated on Winter Phase closure,
+not arbitrary GM year changes. See the upstream compatibility record for source
+references and the distinction between static review and live verification.

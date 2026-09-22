@@ -140,3 +140,17 @@ npm test
 ## Releases
 
 Pushing a tag such as `v0.1.0` validates the manifest and publishes `module.zip` plus `module.json` as GitHub release assets. Do not tag a version until the `version` and versioned `download` URL in `module.json` match the tag.
+
+
+## Upgrading with Pendragon 14.17-14.19
+
+Back up your Foundry world before the upstream Battle/Encounter migration.
+Prefer Pendragon 14.19: its migration fixes an undefined variable present in
+14.17 and 14.18. Campaign Manager does not repair upstream world migrations.
+
+Use companion module 0.12.5 for the NPC Player Notes privacy fix and resync linked
+NPCs to replace or clear their current public descriptions. Resync cannot retract
+earlier disclosures or exported copies. No backend upgrade is required.
+Pendragon 14.19 refreshes displayed ages when the world year changes; automatic
+Campaign Manager synchronization still follows Winter Phase closure. An arbitrary
+GM World Time change alone does not synchronize the backend campaign year.
