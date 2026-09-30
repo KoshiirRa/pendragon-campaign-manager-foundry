@@ -240,7 +240,7 @@ Developer/API contract and player upgrade instructions were updated in this
 module. Live Foundry UI and PostgreSQL end-to-end checks remain unperformed.
 
 
-## Pendragon 14.17-14.19 reconciliation pending publication
+## Pendragon 14.17-14.20 reconciliation pending publication
 
 Reviewed on 2026-09-22 using live GitHub release notes and tagged source diffs
 [14.16...14.17](https://github.com/cragstone/Pendragon/compare/14.16...14.17),
@@ -304,3 +304,21 @@ The backend CharacterCreate/CharacterUpdate nullable public_description and
 service PATCH exclude_unset behavior were checked. No backend implementation
 change or deployment is required. Live Foundry hook ordering, UI, upstream world
 migration and PostgreSQL end-to-end behavior were not exercised.
+
+### Pendragon 14.20
+
+Reviewed on 2026-09-29 using the release notes and the tagged source comparison
+[14.19...14.20](https://github.com/cragstone/Pendragon/compare/14.19...14.20).
+Tag commit: `06734c06a109c274bf3013b465d1ce9b0ccf931e`.
+
+- `PendragonItem.createDialog` now excludes `history` alongside wound, family,
+  squire and relationship Items, preventing History Items from being created in
+  the Item Directory. This does not alter Actor `addHistoryEvent`, existing
+  History Item fields, or the module's read-and-synchronize history mapping.
+  The module does not create History Items through the directory dialog.
+- The remaining changes are journal CSS and declaration artwork. Winter Phase
+  completion, World Time/calendar hooks, Actor and Item data models, public
+  Application APIs, family, horses, wounds, squires, inventory, traits,
+  passions, skills and Glory contracts are unchanged.
+- The upstream manifest remains a Foundry v14 system (minimum and maximum 14,
+  verified build 14.368). No backend or additional companion-module code change
