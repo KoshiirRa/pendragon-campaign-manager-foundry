@@ -7,11 +7,21 @@ the tagged source diff.
 
 ## Reviewed baseline
 
-- Latest reviewed upstream release: `14.14`
-- Upstream tag commit: `885eb96e635abd80462e6fddb5f0a6e4f2e6198b`
-- Review completed: 2026-09-15
-- Companion module version reviewed: `0.12.4`
-- Result: compatible with module 0.12.4 horse-selection fix; no backend change
+- Latest reviewed upstream release: `14.20`
+- Upstream tag commit: `06734c06a109c274bf3013b465d1ce9b0ccf931e`
+- Review completed: 2026-09-29
+- Companion module version reviewed: `0.12.5`
+- Result: compatible; 0.12.5 prevents NPC GM Notes from being sent publicly
+
+## Pendragon 14.15-14.20 publication verified
+
+Source review completed on 2026-09-29 for releases 14.15 through 14.20 using
+their release notes and tagged source comparisons. Module v0.12.5 publication
+was verified on 2026-09-29: tag `v0.12.5` resolves to
+`1af3c553ed98b8a62ce0d3d8d30cb20334fccada`; the GitHub release provides
+`module.zip` and `module.json`. The downloaded ZIP has `module.json` at its
+root, and the released manifest declares module version 0.12.5, Foundry v14
+compatibility, and the corresponding tagged download URL.
 
 ## Pendragon 14.13-14.14 publication verified
 
