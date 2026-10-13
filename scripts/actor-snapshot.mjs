@@ -31,7 +31,9 @@ function mapSquire(item) {
     source_key: sourceKey(item),
     name: cleanName(item.name, "Unnamed Squire"),
     category: cleanOptional(system.category),
-    age: nonnegativeInteger(system.age),
+    // Pendragon 14.21 derives the current age from born/died as newAge while
+    // retaining age for legacy world data.
+    age: nonnegativeInteger(system.newAge ?? system.age),
     skill: nonnegativeInteger(system.skill),
     knight_modifier: integer(system.knightMod),
     glory: nonnegativeInteger(system.glory),

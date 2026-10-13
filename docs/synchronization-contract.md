@@ -50,3 +50,8 @@ The added World Time listener refreshes Actors without emitting a second time
 advance. Modern automatic synchronization remains gated on Winter Phase closure,
 not arbitrary GM year changes. See the upstream compatibility record for source
 references and the distinction between static review and live verification.
+
+
+## Pendragon 14.21
+
+Module 0.12.6 maps prepared `system.newAge` for squires with a legacy `system.age` fallback. It also synchronizes a linked Actor when the new individual Winter Phase ends after the group year has advanced, without moving the campaign year again. The API schema is unchanged; arbitrary GM year changes remain non-synchronizing.

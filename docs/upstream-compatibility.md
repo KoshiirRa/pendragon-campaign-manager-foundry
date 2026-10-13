@@ -5,13 +5,17 @@ This record tracks completed source-level compatibility reviews of the community
 Release notes are treated as review inputs; compatibility decisions are based on
 the tagged source diff.
 
+## Pendragon 14.21
+
+Reviewed on 2026-10-13 using release notes and the complete tagged source comparison [14.20...14.21](https://github.com/cragstone/Pendragon/compare/14.20...14.21). Pendragon derives squire current age as `system.newAge` and can complete an individual Winter Phase after a group year advance. Module 0.12.6 maps the prepared squire age with the legacy `system.age` fallback, and synchronizes a linked Actor when that individual phase ends without advancing the Campaign Manager year again. Active Effects, Archetypes, character-creation, family age presentation, weapon hand states, history year attribution, and the Foundry v14 manifest do not alter the backend contract. No backend deployment is required; live Foundry and PostgreSQL checks remain unverified.
+
 ## Reviewed baseline
 
-- Latest reviewed upstream release: `14.20`
-- Upstream tag commit: `06734c06a109c274bf3013b465d1ce9b0ccf931e`
-- Review completed: 2026-09-29
-- Companion module version reviewed: `0.12.5`
-- Result: compatible; 0.12.5 prevents NPC GM Notes from being sent publicly
+- Latest reviewed upstream release: `14.21`
+- Upstream tag commit: `eaf9837b12ac04cfa5a9c4865bf4b0bc659b6ce2`
+- Review completed: 2026-10-13
+- Companion module version reviewed: `0.12.6`
+- Result: compatible with the 0.12.6 squire-age and individual-Winter adapters
 
 ## Pendragon 14.15-14.20 publication verified
 

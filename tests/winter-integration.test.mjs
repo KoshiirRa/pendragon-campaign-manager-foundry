@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-globalThis.game = { user: { id: "gm-1", isGM: true }, users: { activeGM: { id: "gm-1" } }, time: { components: { year: 486 } } };
-const { currentPendragonYear, isPendragonGameYearSetting, isPendragonWinterSetting, parsedSettingValue, shouldSynchronizeWinterActor } = await import("../scripts/winter-integration.mjs");
+globalThis.game = { user: { id: "gm-1", isGM: true }, users: { activeGM: { id: "gm-1" } }, time: { components: { year: 486 } }, settings: { get: () => false } };
+const { currentPendragonYear, isIndividualWinterCompletion, isPendragonGameYearSetting, isPendragonWinterSetting, parsedSettingValue, shouldSynchronizeWinterActor } = await import("../scripts/winter-integration.mjs");
 
 test("recognizes Pendragon game-year setting updates", () => {
   assert.equal(isPendragonGameYearSetting({ key: "Pendragon.gameYear", value: 486 }), true);
@@ -29,6 +29,8 @@ test("automatically synchronizes only linked character Actors for a GM", () => {
     getFlag: () => "character-1"
   };
   assert.equal(shouldSynchronizeWinterActor(actor), true);
+  assert.equal(isIndividualWinterCompletion(actor, { system: { status: { winter: false } } }), true);
+  assert.equal(isIndividualWinterCompletion(actor, { system: { status: { winter: true } } }), false);
   assert.equal(shouldSynchronizeWinterActor({ ...actor, type: "npc" }), false);
   assert.equal(shouldSynchronizeWinterActor({ ...actor, getFlag: () => null }), false);
   game.user.isGM = false;

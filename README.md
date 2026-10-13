@@ -107,6 +107,8 @@ Manual integration verification uses the stable Foundry PID `i.squire.test-squir
 
 Version 0.12.2 hooks into the Pendragon system's authoritative Winter Phase close sequence through Foundry's public Setting and World Time hooks. It waits for the GM to turn Winter Phase off, observes Pendragon v14.6 advancing `game.time`, then synchronizes every already-linked character once against the completed year before advancing the selected Campaign Manager campaign. The legacy `gameYear` setting path remains supported. The `history` Item with `system.source = winter` establishes Winter Phase participation. Unlinked Actors are never created automatically, and the module does not replace or modify Pendragon's Winter Phase interface.
 
+Version 0.12.6 supports Pendragon 14.21 prepared squire ages and individual Winter Phase completion. A completed linked individual phase is synchronized without advancing the Campaign Manager year again; normal group Winter behavior is unchanged.
+
 Version 0.10.0 expands the **Manage Manor** Actor-header control into an estate manager. In addition to manor creation, tenure, and annual economic resolution, it records itemized treasury entries, assets and livestock, asset state, household employment, improvements and their condition history, and layered defenses. Existing estate history is summarized before a new append-only record is submitted.
 
 Estate currency is displayed in Librum, not modern British pounds. One Librum equals 240 denarii; decimal Librum values remain the API storage convention.

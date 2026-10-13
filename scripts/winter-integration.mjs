@@ -31,6 +31,10 @@ export function registerWinterIntegration({ createClient }) {
     logInfo("World-time advance observed after Winter Phase closure.", { delta, nextYear });
     synchronizeCompletedWinter(nextYear, createClient);
   });
+  Hooks.on("updateActor", (actor, changes) => {
+    if (winterEndPending || !isIndividualWinterCompletion(actor, changes)) return;
+    synchronizeCompletedIndividualWinter(actor, createClient);
+  });
   logInfo("Pendragon Winter Phase end and world-time hooks registered.");
 }
 
@@ -68,6 +72,15 @@ export function currentPendragonYear() {
   return Number(game.time?.components?.year);
 }
 
+export function isIndividualWinterCompletion(actor, changes) {
+  const winterStatus = changes?.system?.status?.winter ?? changes?.["system.status.winter"];
+  return Boolean(
+    shouldSynchronizeWinterActor(actor) &&
+      winterStatus === false &&
+      game.settings?.get?.("Pendragon", "winter") === false
+  );
+}
+
 async function synchronizeCompletedWinter(nextYear, createClient) {
   if (!isPrimaryGM() || synchronizing || nextYear < 1 || nextYear > 9999) return;
   synchronizing = true;
@@ -91,6 +104,27 @@ async function synchronizeCompletedWinter(nextYear, createClient) {
   } catch (error) {
     logError("Completed Winter Phase synchronization failed.", error);
     ui.notifications.error(`Campaign Manager could not synchronize the completed Winter Phase: ${error.message ?? error}`, { permanent: true });
+  } finally {
+    synchronizing = false;
+  }
+}
+
+async function synchronizeCompletedIndividualWinter(actor, createClient) {
+  if (synchronizing) return;
+  synchronizing = true;
+  try {
+    await syncActor(actor, {
+      client: createClient(),
+      campaignId: game.settings.get(MODULE_ID, "campaignId"),
+      worldId: game.world.id,
+      kind: actor.getFlag(MODULE_ID, "characterKind"),
+      familyName: actor.getFlag(MODULE_ID, "familyName")
+    });
+    logInfo("Completed individual Winter Phase synchronized.", { actor: actor.name ?? actor.id });
+    ui.notifications.info("Campaign Manager synchronized the completed individual Winter Phase for " + (actor.name ?? "a linked character") + ".");
+  } catch (error) {
+    logError("Completed individual Winter Phase synchronization failed.", error);
+    ui.notifications.error("Campaign Manager could not synchronize the completed individual Winter Phase: " + (error.message ?? error), { permanent: true });
   } finally {
     synchronizing = false;
   }
