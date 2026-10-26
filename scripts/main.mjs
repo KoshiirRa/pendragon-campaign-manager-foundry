@@ -2,10 +2,11 @@ import { CampaignApiClient } from "./api-client.mjs";
 import { CampaignManagerConfig } from "./config-app.mjs";
 import { registerActorIntegration } from "./actor-integration.mjs";
 import { registerWinterIntegration } from "./winter-integration.mjs";
+import { registerGmChatIntegration } from "./gm-chat.mjs";
 import { logError, logInfo, logWarn } from "./logger.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
-const DEFAULT_BACKEND = "https://pendragon-campaign-api-wetwnuz4jq-uc.a.run.app";
+const DEFAULT_BACKEND = "https://api.pendragon-chronicle.dwarvenbard.com";
 
 logInfo("Main module script loaded.", { version: "0.12.3" });
 
@@ -89,6 +90,7 @@ Hooks.once("ready", () => {
   try {
     registerActorIntegration({ createClient });
     registerWinterIntegration({ createClient });
+    registerGmChatIntegration({ createClient });
   } catch (error) {
     logError("Failed to register Actor synchronization hooks.", error);
   }
@@ -96,8 +98,8 @@ Hooks.once("ready", () => {
   console.info(`game.modules.get("${MODULE_ID}").api.diagnostics()`);
 });
 
-function createClient({ authenticated = true } = {}) {
-  if (authenticated && !game.user.isGM) {
+function createClient({ authenticated = true, allowPlayer = false } = {}) {
+  if (authenticated && !allowPlayer && !game.user.isGM) {
     throw new Error("Only a Gamemaster may access the Campaign Manager API.");
   }
   return new CampaignApiClient({

@@ -145,13 +145,28 @@ export class CampaignApiClient {
     return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/manors/${encodeURIComponent(manorId)}/defenses`, { method: "POST", body: data });
   }
 
+  async sendGmPrompt(campaignId, { prompt, speaker = "Player Knight", actorContext = null, year = null }) {
+    return this.#request(`/api/v1/campaigns/${encodeURIComponent(campaignId)}/chat`, {
+      method: "POST",
+      body: {
+        prompt,
+        speaker,
+        actor_context: actorContext,
+        year
+      }
+    });
+  }
+
   async #request(path, { authenticated = true, method = "GET", body = undefined } = {}) {
     if (!this.baseUrl) throw new CampaignApiError("Campaign Manager API URL is not configured.");
     if (authenticated && !this.apiKey) {
       throw new CampaignApiError("Campaign Manager API key is not configured.");
     }
 
-    const headers = { Accept: "application/json" };
+    const headers = {
+      Accept: "application/json",
+      "X-Client": "Pendragon-Foundry/1.0"
+    };
     if (authenticated) headers["X-API-Key"] = this.apiKey;
     if (body !== undefined) headers["Content-Type"] = "application/json";
 
