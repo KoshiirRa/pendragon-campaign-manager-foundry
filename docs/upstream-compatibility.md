@@ -5,17 +5,48 @@ This record tracks completed source-level compatibility reviews of the community
 Release notes are treated as review inputs; compatibility decisions are based on
 the tagged source diff.
 
+## Pendragon 14.22-14.25
+
+Reviewed on 2026-10-27 using release notes for published 14.22 and 14.25 plus
+tagged source comparisons 14.21...14.22, 14.22...14.23, 14.23...14.24, and
+14.24...14.25 in the upstream repository.
+
+- 14.22 adds Assault Actors and Battle-card refresh behavior. Those do not
+  replace character synchronization, Winter Phase, calendar, Actor/Item, or
+  public Foundry hook contracts used by this module.
+- 14.23 makes the calendar advance optional after group Winter completion,
+  adds a selected winterYear for individual phases, moves passive Glory
+  creation to the corresponding action, derives squire age from birth year,
+  and migrates generic family relations to gendered labels. Module 0.12.7
+  synchronizes a completed group phase before any optional year change, passes
+  an individual selected year as snapshot provenance, and normalizes
+  father/mother/son/daughter to the existing parent/child API relation values.
+  The retained gender continues to distinguish the source relationship.
+- 14.24 is a release packaging and source-cleanup tag; the reviewed manifest
+  remains Foundry v14-compatible and has no Campaign Manager contract effect.
+- 14.25 removes the player-owner prerequisite for Winter participation, adds
+  family career and marriage fields, random naming, skill tooltips, scene UI,
+  and an upstream compendium helper. The module already targets all linked
+  character Actors; the additive family and presentation fields do not replace
+  family/history/horses/wounds/squires/inventory or trait/passion/skill/Glory
+  mappings. The manifest remains compatible with Foundry v14 (verified 14.369).
+
+Validation: 49 module tests pass on dev-vm with Node 22.23.2, including new
+family-label and retrospective-individual-Winter regressions. Live Foundry UI
+and PostgreSQL end-to-end checks remain unperformed. No backend migration,
+deployment, or API contract change is required.
+
 ## Pendragon 14.21
 
 Reviewed on 2026-10-13 using release notes and the complete tagged source comparison [14.20...14.21](https://github.com/cragstone/Pendragon/compare/14.20...14.21). Pendragon derives squire current age as `system.newAge` and can complete an individual Winter Phase after a group year advance. Module 0.12.6 maps the prepared squire age with the legacy `system.age` fallback, and synchronizes a linked Actor when that individual phase ends without advancing the Campaign Manager year again. Active Effects, Archetypes, character-creation, family age presentation, weapon hand states, history year attribution, and the Foundry v14 manifest do not alter the backend contract. No backend deployment is required; live Foundry and PostgreSQL checks remain unverified.
 
 ## Reviewed baseline
 
-- Latest reviewed upstream release: `14.21`
-- Upstream tag commit: `eaf9837b12ac04cfa5a9c4865bf4b0bc659b6ce2`
-- Review completed: 2026-10-13
-- Companion module version reviewed: `0.12.6`
-- Result: compatible with the 0.12.6 squire-age and individual-Winter adapters
+- Latest reviewed upstream release: 14.25
+- Upstream tag commit: 6ac27959bbb3dd815323a42b2a5d8ef07e407563
+- Review completed: 2026-10-27
+- Companion module version reviewed: 0.12.7
+- Result: compatible with the 0.12.7 Winter Phase and family-label adapters
 
 ## Pendragon 14.15-14.20 publication verified
 

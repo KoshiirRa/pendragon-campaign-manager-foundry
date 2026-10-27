@@ -24,7 +24,7 @@ The current release provides campaign setup and historical Actor synchronization
 - gear, weapon, and armour inventory state;
 - horse identity, attributes, equipped state, and ownership history.
 
-Journals are not synchronized. History, wounds, family members, horses, inventory, and squires synchronize from Actor snapshots. Other household members and detailed estate finances are recorded through **Manage Manor**. Completing the Pendragon system's Winter Phase synchronizes every already-linked participating Actor and then advances the selected campaign year.
+Journals are not synchronized. History, wounds, family members, horses, inventory, and squires synchronize from Actor snapshots. Other household members and detailed estate finances are recorded through **Manage Manor**. Completing the Pendragon system's Winter Phase synchronizes every already-linked participating Actor. If the GM confirms Pendragon's optional calendar advance, the selected Campaign Manager year advances too.
 
 ## Configure a world
 
@@ -107,7 +107,9 @@ Manual integration verification uses the stable Foundry PID `i.squire.test-squir
 
 Version 0.12.2 hooks into the Pendragon system's authoritative Winter Phase close sequence through Foundry's public Setting and World Time hooks. It waits for the GM to turn Winter Phase off, observes Pendragon v14.6 advancing `game.time`, then synchronizes every already-linked character once against the completed year before advancing the selected Campaign Manager campaign. The legacy `gameYear` setting path remains supported. The `history` Item with `system.source = winter` establishes Winter Phase participation. Unlinked Actors are never created automatically, and the module does not replace or modify Pendragon's Winter Phase interface.
 
-Version 0.12.6 supports Pendragon 14.21 prepared squire ages and individual Winter Phase completion. A completed linked individual phase is synchronized without advancing the Campaign Manager year again; normal group Winter behavior is unchanged.
+Version 0.12.6 supports Pendragon 14.21 prepared squire ages and individual Winter Phase completion.
+
+Version 0.12.7 supports Pendragon 14.25. It preserves the selected historical year for a linked individual Winter Phase, synchronizes a completed group phase even when the GM declines Pendragon's optional calendar advance, and normalizes upstream father/mother/son/daughter family labels to the existing parent/child API contract. No backend migration is required.
 
 Version 0.10.0 expands the **Manage Manor** Actor-header control into an estate manager. In addition to manor creation, tenure, and annual economic resolution, it records itemized treasury entries, assets and livestock, asset state, household employment, improvements and their condition history, and layered defenses. Existing estate history is summarized before a new append-only record is submitted.
 

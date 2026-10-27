@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 globalThis.game = { user: { id: "gm-1", isGM: true }, users: { activeGM: { id: "gm-1" } }, time: { components: { year: 486 } }, settings: { get: () => false } };
-const { currentPendragonYear, isIndividualWinterCompletion, isPendragonGameYearSetting, isPendragonWinterSetting, parsedSettingValue, shouldSynchronizeWinterActor } = await import("../scripts/winter-integration.mjs");
+const { changedWinterStatus, currentPendragonYear, individualWinterYear, isIndividualWinterCompletion, isPendragonGameYearSetting, isPendragonWinterSetting, parsedSettingValue, shouldSynchronizeWinterActor } = await import("../scripts/winter-integration.mjs");
 
 test("recognizes Pendragon game-year setting updates", () => {
   assert.equal(isPendragonGameYearSetting({ key: "Pendragon.gameYear", value: 486 }), true);
@@ -39,4 +39,12 @@ test("automatically synchronizes only linked character Actors for a GM", () => {
   game.users.activeGM = { id: "gm-2" };
   assert.equal(shouldSynchronizeWinterActor(actor), false);
   game.users.activeGM = { id: "gm-1" };
+});
+
+test("retains the selected individual Winter Phase year until completion", () => {
+  const actor = { id: "actor-1", system: { status: { winterYear: 484 } } };
+  assert.equal(changedWinterStatus({ "system.status.winter": true }), true);
+  assert.equal(individualWinterYear(actor, { system: { status: { winterYear: 485 } } }), 485);
+  assert.equal(individualWinterYear(actor, {}), 484);
+  assert.equal(individualWinterYear({ system: { status: {} } }, {}), 486);
 });

@@ -74,6 +74,20 @@ test("recovers a mapping by Foundry UUID when the Actor flag is absent", async (
   assert.equal(created, false);
 });
 
+test("uses a selected historical year for an individual Winter Phase snapshot", async () => {
+  const snapshots = [];
+  const client = {
+    listCharacters: async () => [],
+    createCharacter: async (_campaignId, payload) => ({ id: "character-1", ...payload }),
+    syncCharacterSnapshot: async (_campaignId, _characterId, snapshot) => {
+      snapshots.push(snapshot);
+      return { changed: true };
+    }
+  };
+  await syncActor(fakeActor(new Map()), { ...syncOptions(client), effectiveYear: 484 });
+  assert.equal(snapshots[0].effective_year, 484);
+});
+
 function fakeActor(flags) {
   return {
     id: "merlin",

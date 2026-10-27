@@ -55,3 +55,22 @@ references and the distinction between static review and live verification.
 ## Pendragon 14.21
 
 Module 0.12.6 maps prepared `system.newAge` for squires with a legacy `system.age` fallback. It also synchronizes a linked Actor when the new individual Winter Phase ends after the group year has advanced, without moving the campaign year again. The API schema is unchanged; arbitrary GM year changes remain non-synchronizing.
+
+
+## Pendragon 14.22-14.25
+
+Module 0.12.7 recognizes the 14.23+ Winter Phase flow. When Pendragon closes a
+group phase, the module synchronizes linked character snapshots once their
+upstream Winter status is complete even if the GM declines Pendragon's optional
+calendar advance. A later calendar advance that follows that close updates the
+Campaign Manager year without duplicating snapshots. For an individual phase,
+the selected system.status.winterYear is retained until close and becomes the
+snapshot effective year, rather than using the current world year.
+
+Pendragon 14.23 migrates generic family relation values to gendered labels.
+father and mother normalize to the API's existing parent; son and daughter
+normalize to child; the original gender remains available. More distant or
+unsupported relation values continue to map to other. Family identity, history,
+horses, wounds, squires, inventory, traits, passions, skills, Glory, and the
+HTTP schema remain unchanged. No backend migration, endpoint, or deployment is
+required.

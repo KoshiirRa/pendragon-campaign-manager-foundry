@@ -3,7 +3,9 @@ import { logError, logInfo } from "./logger.mjs";
 
 const MODULE_ID = "pendragon-campaign-manager";
 let winterEndPending = false;
+let groupWinterActorsSynced = false;
 let synchronizing = false;
+const individualWinterYears = new Map();
 
 export function registerWinterIntegration({ createClient }) {
   Hooks.on("updateSetting", (setting) => {
@@ -16,24 +18,45 @@ export function registerWinterIntegration({ createClient }) {
     if (isPendragonWinterSetting(setting)) {
       if (parsedSettingValue(setting) === false) {
         winterEndPending = true;
-        logInfo("Winter Phase closure detected; waiting for game-year advance.");
+        groupWinterActorsSynced = false;
+        logInfo("Winter Phase closure detected; waiting for linked Actor completion and optional game-year advance.");
       }
       return;
     }
     if (!isPendragonGameYearSetting(setting)) return;
     const year = Number(setting.value);
-    if (winterEndPending) synchronizeCompletedWinter(year, createClient);
-    else synchronizeCampaignYear(year, createClient);
+    if (winterEndPending) {
+      if (groupWinterActorsSynced) {
+        synchronizeCampaignYear(year, createClient);
+        winterEndPending = false;
+      } else synchronizeCompletedWinter(year, createClient);
+    } else synchronizeCampaignYear(year, createClient);
   });
   Hooks.on("updateWorldTime", (_worldTime, delta) => {
     if (!winterEndPending) return;
     const nextYear = currentPendragonYear();
     logInfo("World-time advance observed after Winter Phase closure.", { delta, nextYear });
-    synchronizeCompletedWinter(nextYear, createClient);
+    if (groupWinterActorsSynced) {
+      synchronizeCampaignYear(nextYear, createClient);
+      winterEndPending = false;
+    } else synchronizeCompletedWinter(nextYear, createClient);
   });
   Hooks.on("updateActor", (actor, changes) => {
-    if (winterEndPending || !isIndividualWinterCompletion(actor, changes)) return;
-    synchronizeCompletedIndividualWinter(actor, createClient);
+    const winterStatus = changedWinterStatus(changes);
+    if (winterStatus === true && !winterEndPending && shouldSynchronizeWinterActor(actor)) {
+      individualWinterYears.set(actor.id, individualWinterYear(actor, changes));
+      return;
+    }
+    if (winterEndPending) {
+      if (winterStatus === false && allLinkedWinterActorsClosed()) {
+        synchronizeCompletedWinter(currentPendragonYear(), createClient, { synchronizeYear: false });
+      }
+      return;
+    }
+    if (!isIndividualWinterCompletion(actor, changes)) return;
+    const effectiveYear = individualWinterYears.get(actor.id) ?? currentPendragonYear();
+    individualWinterYears.delete(actor.id);
+    synchronizeCompletedIndividualWinter(actor, createClient, effectiveYear);
   });
   logInfo("Pendragon Winter Phase end and world-time hooks registered.");
 }
@@ -73,7 +96,7 @@ export function currentPendragonYear() {
 }
 
 export function isIndividualWinterCompletion(actor, changes) {
-  const winterStatus = changes?.system?.status?.winter ?? changes?.["system.status.winter"];
+  const winterStatus = changedWinterStatus(changes);
   return Boolean(
     shouldSynchronizeWinterActor(actor) &&
       winterStatus === false &&
@@ -81,7 +104,17 @@ export function isIndividualWinterCompletion(actor, changes) {
   );
 }
 
-async function synchronizeCompletedWinter(nextYear, createClient) {
+export function changedWinterStatus(changes) {
+  return changes?.system?.status?.winter ?? changes?.["system.status.winter"];
+}
+
+export function individualWinterYear(actor, changes) {
+  const value = changes?.system?.status?.winterYear ?? changes?.["system.status.winterYear"] ?? actor.system?.status?.winterYear;
+  const year = Number(value);
+  return Number.isInteger(year) && year > 0 && year <= 9999 ? year : currentPendragonYear();
+}
+
+async function synchronizeCompletedWinter(nextYear, createClient, { synchronizeYear = true } = {}) {
   if (!isPrimaryGM() || synchronizing || nextYear < 1 || nextYear > 9999) return;
   synchronizing = true;
   const actors = game.actors.contents.filter(shouldSynchronizeWinterActor);
@@ -97,8 +130,17 @@ async function synchronizeCompletedWinter(nextYear, createClient) {
       });
       completed += 1;
     }
-    await synchronizeCampaignYear(nextYear, createClient);
-    winterEndPending = false;
+    if (synchronizeYear) {
+      await synchronizeCampaignYear(nextYear, createClient);
+      winterEndPending = false;
+    } else {
+      groupWinterActorsSynced = true;
+      const currentYear = currentPendragonYear();
+      if (currentYear !== nextYear) {
+        await synchronizeCampaignYear(currentYear, createClient);
+        winterEndPending = false;
+      }
+    }
     logInfo("Completed Winter Phase synchronized.", { actors: completed, nextYear });
     ui.notifications.info(`Campaign Manager synchronized Winter Phase for ${completed} linked character${completed === 1 ? "" : "s"}.`);
   } catch (error) {
@@ -109,7 +151,7 @@ async function synchronizeCompletedWinter(nextYear, createClient) {
   }
 }
 
-async function synchronizeCompletedIndividualWinter(actor, createClient) {
+async function synchronizeCompletedIndividualWinter(actor, createClient, effectiveYear) {
   if (synchronizing) return;
   synchronizing = true;
   try {
@@ -118,7 +160,8 @@ async function synchronizeCompletedIndividualWinter(actor, createClient) {
       campaignId: game.settings.get(MODULE_ID, "campaignId"),
       worldId: game.world.id,
       kind: actor.getFlag(MODULE_ID, "characterKind"),
-      familyName: actor.getFlag(MODULE_ID, "familyName")
+      familyName: actor.getFlag(MODULE_ID, "familyName"),
+      effectiveYear
     });
     logInfo("Completed individual Winter Phase synchronized.", { actor: actor.name ?? actor.id });
     ui.notifications.info("Campaign Manager synchronized the completed individual Winter Phase for " + (actor.name ?? "a linked character") + ".");
@@ -128,6 +171,11 @@ async function synchronizeCompletedIndividualWinter(actor, createClient) {
   } finally {
     synchronizing = false;
   }
+}
+
+function allLinkedWinterActorsClosed() {
+  const actors = game.actors?.contents?.filter(shouldSynchronizeWinterActor) ?? [];
+  return actors.length > 0 && actors.every((actor) => actor.system?.status?.winter === false);
 }
 
 async function synchronizeCampaignYear(year, createClient) {

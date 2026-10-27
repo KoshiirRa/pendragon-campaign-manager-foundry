@@ -72,7 +72,7 @@ function mapRelative(item) {
   return {
     source_key: item.uuid || `Item.${item.id}`,
     name: cleanName(item.name, "Unnamed Relative"),
-    relation: ["parent", "spouse", "child", "other"].includes(system.relation) ? system.relation : "other",
+    relation: normalizedRelation(system.relation),
     gender: cleanOptional(system.gender),
     birth_year: positiveYear(system.born),
     death_year: positiveYear(system.died),
@@ -82,6 +82,12 @@ function mapRelative(item) {
     description: cleanOptional(stripHtml(system.description)),
     gm_description: cleanOptional(stripHtml(system.GMdescription))
   };
+}
+
+function normalizedRelation(relation) {
+  if (["parent", "father", "mother"].includes(relation)) return "parent";
+  if (["child", "son", "daughter"].includes(relation)) return "child";
+  return relation === "spouse" ? "spouse" : "other";
 }
 
 function mapInventory(item) {

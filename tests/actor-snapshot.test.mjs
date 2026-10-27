@@ -112,6 +112,19 @@ test("maps family members and heir status with stable identities", () => {
   assert.equal(snapshot.relatives[1].barren_marriage, true);
 });
 
+test("normalizes Pendragon 14.23 gendered family relations without losing parent or child semantics", () => {
+  const snapshot = actorToSnapshot({
+    items: [
+      item("family", "Sir Ector", null, { relation: "father", gender: "male" }),
+      item("family", "Lady Elaine", null, { relation: "mother", gender: "female" }),
+      item("family", "Young Tom", null, { relation: "son", gender: "male" }),
+      item("family", "Young Rose", null, { relation: "daughter", gender: "female" })
+    ]
+  }, 486);
+  assert.deepEqual(snapshot.relatives.map((relative) => relative.relation), ["parent", "parent", "child", "child"]);
+  assert.deepEqual(snapshot.relatives.map((relative) => relative.gender), ["male", "female", "male", "female"]);
+});
+
 test("maps history, Winter Phase provenance, and wounds", () => {
   const snapshot = actorToSnapshot(
     {
