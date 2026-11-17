@@ -5,6 +5,37 @@ This record tracks completed source-level compatibility reviews of the community
 Release notes are treated as review inputs; compatibility decisions are based on
 the tagged source diff.
 
+## Pendragon 14.26
+
+Reviewed on 2026-11-17 using the published release notes and the complete
+tagged source comparison [14.25...14.26](https://github.com/cragstone/Pendragon/compare/14.25...14.26).
+
+- The release expands the upstream Family Item with parent and spouse Item
+  links, introduces Career Items, and adds family survival, career, childbirth,
+  and random-event Winter steps. These are additive embedded-item fields and
+  Item types: they do not replace the stable Family Item identity, relation,
+  birth/death, Glory, description, or history fields synchronized by the
+  module. Random family events create ordinary History Items, which retain the
+  existing history mapping on the next completed Winter synchronization.
+- The former family Winter checklist flag is split into several status flags,
+  but group and individual completion still change `system.status.winter`, and
+  the optional calendar advance still uses World Time and `Pendragon.gameYear`.
+  Module 0.12.7 observes those unchanged public contracts, preserves an
+  individual selected Winter year, and does not depend on the split checklist
+  keys.
+- The upstream system moves its own Actor/Item sheet header handling to V2
+  hooks and updates PID behavior. The companion module neither subclasses those
+  upstream sheets nor consumes PID-only state; its public Foundry v14
+  ApplicationV2 and UUID/Item-ID fallback contracts remain valid. Actor and
+  Item data used for traits, passions, skills, Glory, horses, wounds, squires,
+  inventory, family, and history retain their mappings.
+- The upstream manifest remains Foundry v14-compatible (`minimum` and
+  `maximum` 14; verified build `14.370`). No module or backend implementation,
+  API contract, database migration, release, or deployment is required.
+
+Validation: all 49 module tests pass on dev-vm with Node 22.23.2. Live Foundry
+UI and PostgreSQL end-to-end checks remain unperformed.
+
 ## Pendragon 14.22-14.25
 
 Reviewed on 2026-10-27 using release notes for published 14.22 and 14.25 plus
@@ -42,9 +73,9 @@ Reviewed on 2026-10-13 using release notes and the complete tagged source compar
 
 ## Reviewed baseline
 
-- Latest reviewed upstream release: 14.25
-- Upstream tag commit: 6ac27959bbb3dd815323a42b2a5d8ef07e407563
-- Review completed: 2026-10-27
+- Latest reviewed upstream release: 14.26
+- Upstream tag commit: c8d9f8b66cd921e8c8a1a2a33081840f1a6b0410
+- Review completed: 2026-11-17
 - Companion module version reviewed: 0.12.7
 - Result: compatible with the 0.12.7 Winter Phase and family-label adapters
 
