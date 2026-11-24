@@ -5,6 +5,33 @@ This record tracks completed source-level compatibility reviews of the community
 Release notes are treated as review inputs; compatibility decisions are based on
 the tagged source diff.
 
+## Pendragon 14.27-14.28
+
+Reviewed on 2026-11-24 using the published release notes and complete tagged
+source comparisons [14.26...14.27](https://github.com/cragstone/Pendragon/compare/14.26...14.27)
+and [14.27...14.28](https://github.com/cragstone/Pendragon/compare/14.27...14.28).
+
+- 14.27 adds an equipped Boolean to upstream Weapon and Gear Items and uses it
+  to disable an embedded Item Active Effect when the item is not carried. The
+  companion module already maps the existing system.equipped value for gear,
+  weapons, and armour into the inventory snapshot. The API accepts that field
+  and retains it as inventory state; no schema or mapping change is required.
+  The changed hotbar-drop filter and Item-sheet controls do not affect
+  synchronization.
+- 14.28 changes the Character V2 History-tab create button to create an
+  ordinary embedded History Item using the current World Time year. The module
+  already maps every History Item by UUID/Item ID, title, year, source,
+  descriptions, and reported Glory. Winter Phase completion, calendar flow,
+  actor/item identity, public Foundry v14 hooks and Application APIs, and the
+  family/history/horses/wounds/squires/inventory and trait/passion/skill/Glory
+  contracts remain compatible.
+- The upstream manifest remains Foundry v14-compatible (minimum and maximum
+  14; verified build 14.370). No module or backend implementation, API
+  contract, database migration, release, or deployment is required.
+
+Validation: all 49 module tests pass on dev-vm with Node 22.23.2. Live Foundry
+UI and PostgreSQL end-to-end checks remain unperformed.
+
 ## Pendragon 14.26
 
 Reviewed on 2026-11-17 using the published release notes and the complete
@@ -73,9 +100,9 @@ Reviewed on 2026-10-13 using release notes and the complete tagged source compar
 
 ## Reviewed baseline
 
-- Latest reviewed upstream release: 14.26
-- Upstream tag commit: c8d9f8b66cd921e8c8a1a2a33081840f1a6b0410
-- Review completed: 2026-11-17
+- Latest reviewed upstream release: 14.28
+- Upstream tag commit: 1cd276e09405c99c788ad9bd28d4bc142d0c522c
+- Review completed: 2026-11-24
 - Companion module version reviewed: 0.12.7
 - Result: compatible with the 0.12.7 Winter Phase and family-label adapters
 
